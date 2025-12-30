@@ -16,6 +16,7 @@ from PyQt5.QtWidgets import (
     QFileDialog, QTabWidget, QSpinBox, QTimeEdit, QDateEdit
 )
 from PyQt5.QtCore import Qt, QTimer, pyqtSignal, QThread
+from PyQt5.QtCore import Qt, QTimer, pyqtSignal, QThread
 from PyQt5.QtGui import QColor, QFont
 from datetime import datetime, timedelta
 from typing import Dict, List, Optional
@@ -31,10 +32,16 @@ if sys.platform == 'win32':
     except:
         pass
 
+# 로깅 설정
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 from site_crawling_manager import SiteCrawlingManager, CrawlingStatus, CrawlingMode
 from report_title_manager import ReportTitleManager
 from ai_insights_system import AIInsightsSystem
 from fake_face_system import FakeFaceSystem
+from keyword_search_engine import KeywordSearchEngine, SearchHistoryManager, FavoriteManager
+from search_summary_generator import SearchSummaryGenerator
 
 class JobStatus(Enum):
     """작업 상태 (참고 시스템 호환)"""
@@ -674,6 +681,46 @@ class EnhancedCrawlingDashboard(QMainWindow):
         self.title_manager = ReportTitleManager()
         self.insights_system = AIInsightsSystem()
         
+        # 검색 시스템 초기화 (안전하게)
+        try:
+            from news_crawler import NewsCrawlerManager
+            news_manager = NewsCrawlerManager()
+        except Exception as e:
+            logger.warning(f"뉴스 크롤러 초기화 실패: {e}")
+            news_manager = None
+        
+        try:
+            self.search_engine = KeywordSearchEngine(
+                report_manager=self.title_manager,
+                news_crawler_manager=news_manager
+            )
+        except Exception as e:
+            logger.error(f"검색 엔진 초기화 실패: {e}")
+            self.search_engine = None
+        
+        try:
+            self.search_history = SearchHistoryManager()
+        except Exception as e:
+            logger.error(f"검색 히스토리 초기화 실패: {e}")
+            self.search_history = None
+        
+        try:
+            self.favorite_manager = FavoriteManager()
+        except Exception as e:
+            logger.error(f"즐겨찾기 초기화 실패: {e}")
+            self.favorite_manager = None
+        
+        # 요약 생성기 초기화 (Ollama 실패 시에도 동작)
+        try:
+            self.summary_generator = SearchSummaryGenerator(use_ollama=True)
+        except Exception as e:
+            logger.warning(f"Ollama 초기화 실패, AI 요약 비활성화: {e}")
+            try:
+                self.summary_generator = SearchSummaryGenerator(use_ollama=False)
+            except Exception as e2:
+                logger.error(f"요약 생성기 초기화 실패: {e2}")
+                self.summary_generator = None
+        
         # UI 초기화
         self._init_ui()
         
@@ -707,6 +754,10 @@ class EnhancedCrawlingDashboard(QMainWindow):
         # 탭 4: AI 인사이트
         insights_tab = self._create_insights_tab()
         tabs.addTab(insights_tab, "🤖 AI 인사이트")
+        
+        # 탭 5: 키워드 검색
+        search_tab = self._create_search_tab()
+        tabs.addTab(search_tab, "🔍 키워드 검색")
         
         main_layout.addWidget(tabs)
         main_widget.setLayout(main_layout)
@@ -756,6 +807,349 @@ class EnhancedCrawlingDashboard(QMainWindow):
         
         from run_ultimate_dashboard import InsightsWidget
         return InsightsWidget(self.insights_system, self)
+    
+    def _create_search_tab(self) -> QWidget:
+        """키워드 검색 탭"""
+        
+        widget = QWidget()
+        layout = QVBoxLayout()
+        
+        # 검색 영역
+        search_group = QGroupBox("🔍 키워드 검색")
+        search_layout = QVBoxLayout()
+        
+        # 검색 입력
+        input_layout = QHBoxLayout()
+        self.search_input = QLineEdit()
+        self.search_input.setPlaceholderText("검색어를 입력하세요 (예: 삼성전자, 반도체, HBM...)")
+        self.search_input.returnPressed.connect(self.perform_search)
+        input_layout.addWidget(self.search_input)
+        
+        # 검색 타입 선택
+        self.search_type_combo = QComboBox()
+        self.search_type_combo.addItems(["전체", "보고서", "뉴스", "종목"])
+        input_layout.addWidget(self.search_type_combo)
+        
+        # 검색 버튼
+        self.search_btn = QPushButton("🔍 검색")
+        self.search_btn.clicked.connect(self.perform_search)
+        input_layout.addWidget(self.search_btn)
+        
+        # 로딩 라벨 (초기에는 숨김)
+        self.search_loading_label = QLabel("")
+        self.search_loading_label.setStyleSheet("color: blue; font-weight: bold;")
+        input_layout.addWidget(self.search_loading_label)
+        
+        search_layout.addLayout(input_layout)
+        
+        # 즐겨찾기 및 히스토리
+        quick_layout = QHBoxLayout()
+        
+        # 즐겨찾기
+        favorites_btn = QPushButton("⭐ 즐겨찾기")
+        favorites_btn.clicked.connect(self.show_favorites)
+        quick_layout.addWidget(favorites_btn)
+        
+        # 최근 검색
+        history_btn = QPushButton("📜 최근 검색")
+        history_btn.clicked.connect(self.show_history)
+        quick_layout.addWidget(history_btn)
+        
+        quick_layout.addStretch()
+        search_layout.addLayout(quick_layout)
+        
+        search_group.setLayout(search_layout)
+        layout.addWidget(search_group)
+        
+        # 결과 영역 (스플리터)
+        splitter = QSplitter(Qt.Horizontal)
+        
+        # 왼쪽: 검색 결과
+        results_group = QGroupBox("검색 결과")
+        results_layout = QVBoxLayout()
+        
+        self.results_table = QTableWidget()
+            self.results_table.setColumnCount(5)
+            self.results_table.setHorizontalHeaderLabels([
+                "제목", "소스", "관련도", "종목코드", "날짜"
+            ])
+            self.results_table.setSelectionBehavior(QTableWidget.SelectRows)
+            self.results_table.doubleClicked.connect(self.on_result_clicked)
+            
+            # 칸 비율 설정: 제목 넓게, 날짜 짧게
+            header = self.results_table.horizontalHeader()
+            header.setSectionResizeMode(0, QHeaderView.Stretch)  # 제목: 자동 확장
+            header.setSectionResizeMode(1, QHeaderView.ResizeToContents)  # 소스: 내용에 맞춤
+            header.setSectionResizeMode(2, QHeaderView.ResizeToContents)  # 관련도: 내용에 맞춤
+            header.setSectionResizeMode(3, QHeaderView.ResizeToContents)  # 종목코드: 내용에 맞춤
+            header.setSectionResizeMode(4, QHeaderView.ResizeToContents)  # 날짜: 내용에 맞춤 (짧게)
+        results_layout.addWidget(self.results_table)
+        
+        results_group.setLayout(results_layout)
+        splitter.addWidget(results_group)
+        
+        # 오른쪽: 요약 및 상세
+        summary_group = QGroupBox("요약 및 분석")
+        summary_layout = QVBoxLayout()
+        
+        self.summary_text = QTextEdit()
+        self.summary_text.setReadOnly(True)
+        self.summary_text.setPlaceholderText("검색 결과 요약이 여기에 표시됩니다...")
+        summary_layout.addWidget(self.summary_text)
+        
+        summary_group.setLayout(summary_layout)
+        splitter.addWidget(summary_group)
+        
+        splitter.setSizes([600, 400])
+        layout.addWidget(splitter)
+        
+        widget.setLayout(layout)
+        return widget
+    
+    def perform_search(self):
+        """검색 실행"""
+        # 검색 엔진 확인
+        if not self.search_engine:
+            QMessageBox.critical(self, "오류", "검색 엔진이 초기화되지 않았습니다.")
+            return
+        
+        keyword = self.search_input.text().strip()
+        if not keyword:
+            QMessageBox.warning(self, "경고", "검색어를 입력하세요.")
+            return
+        
+        # 검색 버튼 비활성화 및 로딩 표시
+        self.search_btn.setEnabled(False)
+        self.search_btn.setText("검색 중...")
+        self.search_loading_label.setText("⏳ 검색 중...")
+        QApplication.processEvents()  # UI 업데이트
+        
+        # 검색 타입 변환
+        search_type_map = {
+            "전체": "all",
+            "보고서": "reports",
+            "뉴스": "news",
+            "종목": "stocks"
+        }
+        search_type = search_type_map.get(self.search_type_combo.currentText(), "all")
+        
+        # 검색 실행
+        try:
+            results, query = self.search_engine.search(keyword, search_type=search_type, limit=50)
+            
+            # 히스토리 저장
+            if self.search_history:
+                try:
+                    self.search_history.add_search(query)
+                except Exception as e:
+                    logger.warning(f"히스토리 저장 실패: {e}")
+            
+            # 결과 표시
+            try:
+                self.display_results(results)
+            except Exception as e:
+                logger.error(f"결과 표시 실패: {e}")
+                import traceback
+                logger.error(traceback.format_exc())
+            
+            # 요약 생성
+            if self.summary_generator:
+                try:
+                    summary = self.summary_generator.generate_summary(keyword, results)
+                    self.display_summary(summary)
+                except Exception as e:
+                    logger.error(f"요약 생성 실패: {e}")
+                    # 간단한 요약 표시
+                    simple_summary = {
+                        'keyword': keyword,
+                        'total_results': len(results),
+                        'summary': f"'{keyword}' 검색 결과 {len(results)}개를 찾았습니다.",
+                        'key_findings': [],
+                        'sources': {},
+                        'stock_codes': []
+                    }
+                    try:
+                        self.display_summary(simple_summary)
+                    except:
+                        pass
+            else:
+                # 요약 생성기가 없으면 간단한 메시지만
+                simple_summary = {
+                    'keyword': keyword,
+                    'total_results': len(results),
+                    'summary': f"'{keyword}' 검색 결과 {len(results)}개를 찾았습니다.",
+                    'key_findings': [],
+                    'sources': {},
+                    'stock_codes': []
+                }
+                try:
+                    self.display_summary(simple_summary)
+                except:
+                    pass
+            
+            # 즐겨찾기 자동 추가 (자주 검색한 경우)
+            if self.favorite_manager and len(results) > 0:
+                try:
+                    # 종목 코드가 있으면 즐겨찾기 추가
+                    for result in results[:3]:
+                        if result.stock_codes:
+                            for stock_code in result.stock_codes[:1]:
+                                self.favorite_manager.add_favorite(
+                                    'stock',
+                                    f"종목 {stock_code}",
+                                    stock_code
+                                )
+                except Exception as e:
+                    logger.warning(f"즐겨찾기 추가 실패: {e}")
+        
+        except Exception as e:
+            import traceback
+            error_msg = f"검색 중 오류 발생:\n{str(e)}\n\n{traceback.format_exc()}"
+            logger.error(error_msg)
+            QMessageBox.critical(self, "검색 오류", f"검색 중 오류가 발생했습니다:\n\n{str(e)}")
+        finally:
+            # 검색 버튼 활성화 및 로딩 제거
+            self.search_btn.setEnabled(True)
+            self.search_btn.setText("🔍 검색")
+            self.search_loading_label.setText("")
+    
+    def display_results(self, results):
+        """검색 결과 표시"""
+        if not results:
+            self.results_table.setRowCount(0)
+            return
+        
+        try:
+            self.results_table.setRowCount(len(results))
+            
+            for i, result in enumerate(results):
+                try:
+                    # 제목 (전체 표시, 길어도 됨)
+                    title = str(result.title) if result.title else "-"
+                    self.results_table.setItem(i, 0, QTableWidgetItem(title))
+                    
+                    # 소스
+                    source_icon = {"report": "📄", "news": "📰", "stock": "📈"}.get(result.source, "📋")
+                    source_text = f"{source_icon} {result.source}" if result.source else "-"
+                    self.results_table.setItem(i, 1, QTableWidgetItem(source_text))
+                    
+                    # 관련도
+                    relevance_score = float(result.relevance_score) if hasattr(result, 'relevance_score') else 0.0
+                    relevance_item = QTableWidgetItem(f"{relevance_score:.2f}")
+                    if relevance_score >= 0.8:
+                        relevance_item.setForeground(QColor(0, 150, 0))
+                    elif relevance_score >= 0.5:
+                        relevance_item.setForeground(QColor(200, 150, 0))
+                    else:
+                        relevance_item.setForeground(QColor(150, 0, 0))
+                    self.results_table.setItem(i, 2, relevance_item)
+                    
+                    # 종목코드
+                    stock_codes = result.stock_codes if hasattr(result, 'stock_codes') and result.stock_codes else []
+                    stock_text = ", ".join(str(code) for code in stock_codes[:3]) if stock_codes else "-"
+                    self.results_table.setItem(i, 3, QTableWidgetItem(stock_text))
+                    
+                    # 날짜 (짧게 표시)
+                    if hasattr(result, 'published_at') and result.published_at:
+                        try:
+                            # 날짜를 짧게 표시 (MM-DD 형식)
+                            date_str = result.published_at.strftime("%m-%d")
+                        except:
+                            date_str = "-"
+                    else:
+                        date_str = "-"
+                    self.results_table.setItem(i, 4, QTableWidgetItem(date_str))
+                except Exception as e:
+                    logger.error(f"결과 {i} 표시 실패: {e}")
+                    continue
+            
+            # 칸 비율 재설정 (제목은 넓게 유지)
+            header = self.results_table.horizontalHeader()
+            header.setSectionResizeMode(0, QHeaderView.Stretch)  # 제목: 자동 확장
+            # 나머지는 내용에 맞춤
+            for col in range(1, 5):
+                header.setSectionResizeMode(col, QHeaderView.ResizeToContents)
+        except Exception as e:
+            logger.error(f"결과 표시 중 오류: {e}")
+            import traceback
+            logger.error(traceback.format_exc())
+            QMessageBox.warning(self, "경고", f"결과 표시 중 오류가 발생했습니다: {str(e)}")
+    
+    def display_summary(self, summary: Dict):
+        """요약 표시"""
+        text = f"🔍 검색어: {summary['keyword']}\n"
+        text += f"📊 총 결과: {summary['total_results']}개\n\n"
+        text += f"📝 요약:\n{summary['summary']}\n\n"
+        
+        if summary.get('key_findings'):
+            text += "🔑 주요 발견사항:\n"
+            for finding in summary['key_findings']:
+                text += f"  • {finding}\n"
+            text += "\n"
+        
+        if summary.get('stock_codes'):
+            text += f"📈 관련 종목: {', '.join(summary['stock_codes'][:10])}\n"
+        
+        if summary.get('sources'):
+            text += f"\n📚 소스별: {', '.join([f'{k} {v}개' for k, v in summary['sources'].items()])}"
+        
+        self.summary_text.setText(text)
+    
+    def on_result_clicked(self, index):
+        """결과 클릭 처리"""
+        row = index.row()
+        # 여기서 상세 정보 표시 또는 URL 열기
+        pass
+    
+    def show_favorites(self):
+        """즐겨찾기 표시"""
+        if not self.favorite_manager:
+            QMessageBox.warning(self, "경고", "즐겨찾기 기능이 초기화되지 않았습니다.")
+            return
+        
+        try:
+            favorites = self.favorite_manager.get_frequent_favorites(20)
+            
+            if not favorites:
+                QMessageBox.information(self, "즐겨찾기", "즐겨찾기가 없습니다.")
+                return
+            
+            # 즐겨찾기 목록 표시
+            msg = "⭐ 즐겨찾기:\n\n"
+            for item in favorites:
+                msg += f"  • {item.name} ({item.item_type}) - 사용 {item.use_count}회\n"
+            
+            QMessageBox.information(self, "즐겨찾기", msg)
+        except Exception as e:
+            logger.error(f"즐겨찾기 표시 실패: {e}")
+            QMessageBox.warning(self, "오류", f"즐겨찾기 표시 중 오류가 발생했습니다: {str(e)}")
+    
+    def show_history(self):
+        """검색 히스토리 표시"""
+        if not self.search_history:
+            QMessageBox.warning(self, "경고", "검색 히스토리 기능이 초기화되지 않았습니다.")
+            return
+        
+        try:
+            recent = self.search_history.get_recent_searches(20)
+            
+            if not recent:
+                QMessageBox.information(self, "검색 히스토리", "검색 내역이 없습니다.")
+                return
+            
+            # 히스토리 목록 표시
+            msg = "📜 최근 검색:\n\n"
+            for query in recent:
+                try:
+                    date_str = query.created_at.strftime('%Y-%m-%d %H:%M') if query.created_at else "-"
+                    msg += f"  • {query.keyword} ({query.result_count}개 결과) - {date_str}\n"
+                except:
+                    msg += f"  • {query.keyword} ({query.result_count}개 결과)\n"
+            
+            QMessageBox.information(self, "검색 히스토리", msg)
+        except Exception as e:
+            logger.error(f"히스토리 표시 실패: {e}")
+            QMessageBox.warning(self, "오류", f"검색 히스토리 표시 중 오류가 발생했습니다: {str(e)}")
     
     def _initialize(self):
         """초기화"""

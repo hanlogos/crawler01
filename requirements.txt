@@ -3,3 +3,7 @@ beautifulsoup4>=4.12.0
 lxml>=4.9.0
 PyQt5>=5.15.0
 
+# 뉴스 크롤링 및 팩트 체크 시스템
+feedparser>=6.0.10
+psycopg2-binary>=2.9.9  # PostgreSQL (선택적)
+
