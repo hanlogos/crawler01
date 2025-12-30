@@ -1,0 +1,802 @@
+{
+  "domain": "www.38.co.kr",
+  "timestamp": "2025-12-30T16:28:35.677419",
+  "base_url": "http://www.38.co.kr",
+  "menus": [
+    {
+      "text": "장외시세 종목분석",
+      "url": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": [
+        "https://www.38.co.kr/html/trade/price/bunsuk.php",
+        "https://www.38.co.kr/html/news/?m=nostock",
+        "https://www.38.co.kr/html/news/?m=gongsi",
+        "https://www.38.co.kr/html/fund/?o=ir",
+        "https://www.38.co.kr/html/fund/?o=r",
+        "https://www.38.co.kr/html/fund/?o=r1",
+        "https://www.38.co.kr/html/fund/?o=k",
+        "https://www.38.co.kr/html/fund/?o=nw",
+        "https://www.38.co.kr/html/news/?m=IPO",
+        "https://www.38.co.kr/html/news/?m=konex",
+        "https://www.38.co.kr/html/news/?m=konexgongsi",
+        "https://www.38.co.kr/html/news/?m=freeboard",
+        "https://www.38.co.kr/html/news/?m=freegongsi",
+        "https://www.38.co.kr/html/news/?m=kosdaq",
+        "https://www.38.co.kr/html/news/?m=kosdaq&nkey=special",
+        "https://www.38.co.kr/html/news/?m=kosdaq&nkey=market",
+        "https://www.38.co.kr/html/news/?m=kosdaq&nkey=report",
+        "https://www.38.co.kr/html/news/?o=v&m=kosdaq&no=1879932&files=2025123013255824337",
+        "https://www.38.co.kr/html/news/?o=v&m=kosdaq&no=1879911&files=2025123013063372185",
+        "https://www.38.co.kr/html/news/?o=v&m=kosdaq&no=1879805&files=2025123010480158223",
+        "https://www.38.co.kr/html/news/?o=v&m=kosdaq&no=1879819&files=202512301032500789",
+        "https://www.38.co.kr/html/news/?o=v&m=kosdaq&no=1879143&files=202512291057360423",
+        "https://www.38.co.kr/html/news/?o=v&m=kosdaq&no=1879072&files=202512290955010360",
+        "https://www.38.co.kr/html/fund/?o=v&no=2266",
+        "https://www.38.co.kr/html/fund/?o=v&no=2267",
+        "https://www.38.co.kr/html/fund/?o=v&no=2268",
+        "https://www.38.co.kr/html/fund/?o=v&no=2255",
+        "https://www.38.co.kr/html/fund/?o=v&no=2248",
+        "https://www.38.co.kr/html/fund1/?o=v&no=621",
+        "https://www.38.co.kr/html/fund1/?o=v&no=620",
+        "https://www.38.co.kr/html/fund1/?o=v&no=618",
+        "https://www.38.co.kr/html/fund1/?o=v&no=619",
+        "https://www.38.co.kr/html/fund1/?o=v&no=617",
+        "https://www.38.co.kr/html/fund2/?o=v&no=1741",
+        "https://www.38.co.kr/html/fund2/?o=v&no=1745",
+        "https://www.38.co.kr/html/fund2/?o=v&no=1746",
+        "https://www.38.co.kr/html/fund2/?o=v&no=1739",
+        "https://www.38.co.kr/html/fund2/?o=v&no=1755",
+        "https://www.38.co.kr/html/fund/?o=v&no=2252",
+        "https://www.38.co.kr/html/fund/?o=v&no=2258",
+        "https://www.38.co.kr/html/fund/?o=v&no=2231",
+        "https://www.38.co.kr/html/fund/?o=v&no=2247",
+        "https://www.38.co.kr/html/fund/?o=v&no=2242",
+        "https://www.38.co.kr/html/fund/?o=v&no=2237",
+        "https://www.38.co.kr/html/fund/?o=v&no=2238",
+        "https://www.38.co.kr/html/fund2/"
+      ]
+    },
+    {
+      "text": "비상장 뉴스종합",
+      "url": "https://www.38.co.kr/html/news/?m=nostock",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": [
+        "https://www.38.co.kr/html/news/allnews.php3?m=kosdaq&no=1880069&files=2025123015340935056",
+        "https://www.38.co.kr/html/news/allnews.php3?m=kosdaq&no=1879684&files=2025123009015353906",
+        "https://www.38.co.kr/html/news/allnews.php3?m=kosdaq&no=1879620&files=2025123006123766709",
+        "https://www.38.co.kr/html/news/allnews.php3?m=konex&no=1869581&files=2025121020211922050",
+        "https://www.38.co.kr/html/news/allnews.php3?m=konex&no=1861786&files=2025112708511747604",
+        "https://www.38.co.kr/html/news/allnews.php3?m=konex&no=1792680&files=202507300833542330",
+        "https://www.38.co.kr/html/news/allnews.php3?m=konex&no=1744380&files=2025050215572281266",
+        "https://www.38.co.kr/html/news/allnews.php3?m=konex&no=1687128&files=202501211717049584",
+        "https://www.38.co.kr/html/news/allnews.php3?m=konex&no=1846931&files=2024011009065815773",
+        "https://www.38.co.kr/html/news/allnews.php3?m=kosdaq&no=1878397",
+        "https://www.38.co.kr/html/news/allnews.php3?m=kosdaq&no=1877078",
+        "https://www.38.co.kr/html/news/allnews.php3?m=kosdaq&no=1878145",
+        "https://www.38.co.kr/html/news/allnews.php3?m=kosdaq&no=1877692",
+        "https://www.38.co.kr/html/news/allnews.php3?m=kosdaq&no=1879450"
+      ]
+    },
+    {
+      "text": "공시자료",
+      "url": "https://www.38.co.kr/html/news/?m=gongsi",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "기업IR 일정",
+      "url": "https://www.38.co.kr/html/fund/?o=ir",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": [
+        "https://www.38.co.kr/html/fund/ipo.htm?o=kk",
+        "https://www.38.co.kr/html/fund/index.htm?o=k"
+      ]
+    },
+    {
+      "text": "수요예측 일정",
+      "url": "https://www.38.co.kr/html/fund/?o=r",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "수요예측 결과",
+      "url": "https://www.38.co.kr/html/fund/?o=r1",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "공모주 청약일정",
+      "url": "https://www.38.co.kr/html/fund/?o=k",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "신규상장",
+      "url": "https://www.38.co.kr/html/fund/?o=nw",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "실권주 /일반공모",
+      "url": "https://www.38.co.kr/html/fund2/index.htm",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/fund2/index.htm",
+      "children": [
+        "https://www.38.co.kr/html/fund2/index.htm"
+      ]
+    },
+    {
+      "text": "CB / BW",
+      "url": "https://www.38.co.kr/html/fund1/index.htm",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/fund1/index.htm",
+      "children": [
+        "https://www.38.co.kr/html/fund1/index.htm"
+      ]
+    },
+    {
+      "text": "IPO 뉴스",
+      "url": "https://www.38.co.kr/html/news/?m=IPO",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "공모기업 종목분석",
+      "url": "https://www.38.co.kr/html/fund/ipo.htm?o=kk",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/fund/?o=ir",
+      "children": []
+    },
+    {
+      "text": "장외시세종목 분석",
+      "url": "https://www.38.co.kr/html/ipo/bunsuk.php",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/ipo/bunsuk.php",
+      "children": [
+        "https://www.38.co.kr/html/ipo/bunsuk.php",
+        "https://www.38.co.kr/html/ipo/ipo_plan.htm"
+      ]
+    },
+    {
+      "text": "코넥스 뉴스",
+      "url": "https://www.38.co.kr/html/news/?m=konex",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "코넥스 공시자료",
+      "url": "https://www.38.co.kr/html/news/?m=konexgongsi",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "기업 분석자료",
+      "url": "https://www.38.co.kr/html/konex/ir_data.php",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/konex/ir_data.php",
+      "children": [
+        "https://www.38.co.kr/html/konex/ir_data.php"
+      ]
+    },
+    {
+      "text": "K-OTC 뉴스",
+      "url": "https://www.38.co.kr/html/news/?m=freeboard",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "K-OTC 공시",
+      "url": "https://www.38.co.kr/html/news/?m=freegongsi",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "실시간 뉴스속보",
+      "url": "https://www.38.co.kr/html/news/?m=kosdaq",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "장중 특징주",
+      "url": "https://www.38.co.kr/html/news/?m=kosdaq&nkey=special",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "마켓브리핑",
+      "url": "https://www.38.co.kr/html/news/?m=kosdaq&nkey=market",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "신규 리포트",
+      "url": "https://www.38.co.kr/html/news/?m=kosdaq&nkey=report",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "리센스메디컬, 코스닥 상장 예비심사 승인…\"원천기술 시장성 확인\"",
+      "url": "http://www.38.co.kr/html/news/allnews.php3?no=1879713",
+      "level": 1,
+      "parent": "http://www.38.co.kr/html/news/allnews.php3?no=1879713",
+      "children": [
+        "http://www.38.co.kr/html/news/allnews.php3?no=1879713",
+        "http://www.38.co.kr/html/news/allnews.php3?no=1878974",
+        "http://www.38.co.kr/html/news/allnews.php3?no=1878145",
+        "http://www.38.co.kr/html/news/allnews.php3?m=nostock&no=1879450&files=2025122916433833658",
+        "http://www.38.co.kr/html/news/allnews.php3?m=nostock&no=1878397&files=202512261547379955",
+        "http://www.38.co.kr/html/news/allnews.php3?m=nostock&no=1877692&files=202512241545579559",
+        "http://www.38.co.kr/html/news/allnews.php3?m=ipo&no=1879713&files=2025123009241369859",
+        "http://www.38.co.kr/html/news/allnews.php3?m=ipo&no=1878145&files=2025122608495935679",
+        "http://www.38.co.kr/html/news/allnews.php3?m=ipo&no=1874373&files=2025121915002480889",
+        "http://www.38.co.kr/html/news/allnews.php3?m=ipo_s&no=3336",
+        "http://www.38.co.kr/html/news/allnews.php3?m=ipo_s&no=3335",
+        "http://www.38.co.kr/html/news/allnews.php3?m=ipo_s&no=3334",
+        "http://www.38.co.kr/html/news/?m=gongsi"
+      ]
+    },
+    {
+      "text": "냉각 솔루션으로 \"빠르고 덜 아픈\" 시술 강점리센스메디컬이 한국거래소로부터 코스닥 상장을 위한 예비심사 승인을 받았다고 30일 밝혔다. 회사는 내년 상반기 코스닥 시장 입성을 목표로 본격......",
+      "url": "http://www.38.co.kr/html/news/allnews.php3?no=1879713",
+      "level": 1,
+      "parent": "http://www.38.co.kr/html/news/allnews.php3?no=1879713",
+      "children": []
+    },
+    {
+      "text": "반도체 새내기주 세미파이브, 코스닥 상장 첫날…",
+      "url": "http://www.38.co.kr/html/news/allnews.php3?no=1878974",
+      "level": 1,
+      "parent": "http://www.38.co.kr/html/news/allnews.php3?no=1879713",
+      "children": []
+    },
+    {
+      "text": "인벤테라, 코스닥 상장 예심 승인…\"MRI 신약 3종",
+      "url": "http://www.38.co.kr/html/news/allnews.php3?no=1878145",
+      "level": 1,
+      "parent": "http://www.38.co.kr/html/news/allnews.php3?no=1879713",
+      "children": []
+    },
+    {
+      "text": "[장외시황] 스트라드비젼, 21.63% 상승",
+      "url": "http://www.38.co.kr/html/news/allnews.php3?m=nostock&no=1879450&files=2025122916433833658",
+      "level": 1,
+      "parent": "http://www.38.co.kr/html/news/allnews.php3?no=1879713",
+      "children": []
+    },
+    {
+      "text": "[장외시황] 인벤테라·코스모로보틱스, 코",
+      "url": "http://www.38.co.kr/html/news/allnews.php3?m=nostock&no=1878397&files=202512261547379955",
+      "level": 1,
+      "parent": "http://www.38.co.kr/html/news/allnews.php3?no=1879713",
+      "children": []
+    },
+    {
+      "text": "[장외시황] 액스비스, 증권신고서 제출",
+      "url": "http://www.38.co.kr/html/news/allnews.php3?m=nostock&no=1877692&files=202512241545579559",
+      "level": 1,
+      "parent": "http://www.38.co.kr/html/news/allnews.php3?no=1879713",
+      "children": []
+    },
+    {
+      "text": "리센스메디컬, 코스닥 상장 예비심사 승인",
+      "url": "http://www.38.co.kr/html/news/allnews.php3?m=ipo&no=1879713&files=2025123009241369859",
+      "level": 1,
+      "parent": "http://www.38.co.kr/html/news/allnews.php3?no=1879713",
+      "children": []
+    },
+    {
+      "text": "인벤테라, 코스닥 상장 예심 승인…\"M",
+      "url": "http://www.38.co.kr/html/news/allnews.php3?m=ipo&no=1878145&files=2025122608495935679",
+      "level": 1,
+      "parent": "http://www.38.co.kr/html/news/allnews.php3?no=1879713",
+      "children": []
+    },
+    {
+      "text": "세미파이브 공모청약 마감날 청약경쟁률",
+      "url": "http://www.38.co.kr/html/news/allnews.php3?m=ipo&no=1874373&files=2025121915002480889",
+      "level": 1,
+      "parent": "http://www.38.co.kr/html/news/allnews.php3?no=1879713",
+      "children": []
+    },
+    {
+      "text": "2025년 증시 폐장…코스피·코스닥 약보합 마감",
+      "url": "https://www.38.co.kr/html/news/allnews.php3?m=kosdaq&no=1880069&files=2025123015340935056",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/news/?m=nostock",
+      "children": []
+    },
+    {
+      "text": "폐장 앞둔 국내증시…코스피·코스닥 동반 약세",
+      "url": "https://www.38.co.kr/html/news/allnews.php3?m=kosdaq&no=1879684&files=2025123009015353906",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/news/?m=nostock",
+      "children": []
+    },
+    {
+      "text": "산타랠리 물건너가나…은값 최고가 직후 급락[",
+      "url": "https://www.38.co.kr/html/news/allnews.php3?m=kosdaq&no=1879620&files=2025123006123766709",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/news/?m=nostock",
+      "children": []
+    },
+    {
+      "text": "\"딱 1주 거래\"로 상한가 쳤다… 유동",
+      "url": "https://www.38.co.kr/html/news/allnews.php3?m=konex&no=1869581&files=2025121020211922050",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/news/?m=nostock",
+      "children": []
+    },
+    {
+      "text": "거래량 0건 기업 다수…코넥스 올해 신규상장 3",
+      "url": "https://www.38.co.kr/html/news/allnews.php3?m=konex&no=1861786&files=2025112708511747604",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/news/?m=nostock",
+      "children": []
+    },
+    {
+      "text": "\"그냥 여기 남을래요\"…시들해진 이",
+      "url": "https://www.38.co.kr/html/news/allnews.php3?m=konex&no=1792680&files=202507300833542330",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/news/?m=nostock",
+      "children": []
+    },
+    {
+      "text": "롯데글로벌로지스, 상장 철회…\"적정 가치",
+      "url": "https://www.38.co.kr/html/news/allnews.php3?m=konex&no=1744380&files=2025050215572281266",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/news/?m=nostock",
+      "children": []
+    },
+    {
+      "text": "[종합] 기관투자자 '단타' 막고 '좀비기업' 퇴",
+      "url": "https://www.38.co.kr/html/news/allnews.php3?m=konex&no=1687128&files=202501211717049584",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/news/?m=nostock",
+      "children": []
+    },
+    {
+      "text": "와이즈에이아이, 기술평가 최고 등급 ‘TI-1’",
+      "url": "https://www.38.co.kr/html/news/allnews.php3?m=konex&no=1846931&files=2024011009065815773",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/news/?m=nostock",
+      "children": []
+    },
+    {
+      "text": "[인사]KB증권",
+      "url": "https://www.38.co.kr/html/news/?o=v&m=kosdaq&no=1879932&files=2025123013255824337",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "[인사]LS증권",
+      "url": "https://www.38.co.kr/html/news/?o=v&m=kosdaq&no=1879911&files=2025123013063372185",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "[인사] 한양증권",
+      "url": "https://www.38.co.kr/html/news/?o=v&m=kosdaq&no=1879805&files=2025123010480158223",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "[특징주] ‘12만전자’·‘65만닉스’…삼성전",
+      "url": "https://www.38.co.kr/html/news/?o=v&m=kosdaq&no=1879819&files=202512301032500789",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "[특징주] 스맥, 20.2% vs 18.7% 경영권 분쟁 가",
+      "url": "https://www.38.co.kr/html/news/?o=v&m=kosdaq&no=1879143&files=202512291057360423",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "[특징주] 메모리 훈풍 계속…삼성전자 장중 52",
+      "url": "https://www.38.co.kr/html/news/?o=v&m=kosdaq&no=1879072&files=202512290955010360",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "액스비스, 공모청약 일정",
+      "url": "http://www.38.co.kr/html/news/allnews.php3?m=ipo_s&no=3336",
+      "level": 1,
+      "parent": "http://www.38.co.kr/html/news/allnews.php3?no=1879713",
+      "children": []
+    },
+    {
+      "text": "세미파이브, 확정공모가 24,000원",
+      "url": "http://www.38.co.kr/html/news/allnews.php3?m=ipo_s&no=3335",
+      "level": 1,
+      "parent": "http://www.38.co.kr/html/news/allnews.php3?no=1879713",
+      "children": []
+    },
+    {
+      "text": "리브스메드, 확정공모가 55,000원",
+      "url": "http://www.38.co.kr/html/news/allnews.php3?m=ipo_s&no=3334",
+      "level": 1,
+      "parent": "http://www.38.co.kr/html/news/allnews.php3?no=1879713",
+      "children": []
+    },
+    {
+      "text": "삼성스팩13호",
+      "url": "https://www.38.co.kr/html/fund/?o=v&no=2266",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "덕양에너젠",
+      "url": "https://www.38.co.kr/html/fund/?o=v&no=2267",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "액스비스",
+      "url": "https://www.38.co.kr/html/fund/?o=v&no=2268",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "액스비스",
+      "url": "https://www.38.co.kr/html/fund/?o=v&no=2268",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "덕양에너젠",
+      "url": "https://www.38.co.kr/html/fund/?o=v&no=2267",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "삼성스팩13호",
+      "url": "https://www.38.co.kr/html/fund/?o=v&no=2266",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "세미파이브",
+      "url": "https://www.38.co.kr/html/fund/?o=v&no=2255",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "리브스메드",
+      "url": "https://www.38.co.kr/html/fund/?o=v&no=2248",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "디와이디(구.자안코스메틱)",
+      "url": "https://www.38.co.kr/html/fund1/?o=v&no=621",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "셀루메드(구.코리아본뱅크)",
+      "url": "https://www.38.co.kr/html/fund1/?o=v&no=620",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "에이프로젠헬스케어게임즈",
+      "url": "https://www.38.co.kr/html/fund1/?o=v&no=618",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "대유플러스",
+      "url": "https://www.38.co.kr/html/fund1/?o=v&no=619",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "엠에프엠코리아",
+      "url": "https://www.38.co.kr/html/fund1/?o=v&no=617",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "비보존제약(구.비보존 헬스케어)",
+      "url": "https://www.38.co.kr/html/fund2/?o=v&no=1741",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "라온피플",
+      "url": "https://www.38.co.kr/html/fund2/?o=v&no=1745",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "아이씨에이치",
+      "url": "https://www.38.co.kr/html/fund2/?o=v&no=1746",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "형지엘리트(구.에리트베이직)",
+      "url": "https://www.38.co.kr/html/fund2/?o=v&no=1739",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "아미코젠",
+      "url": "https://www.38.co.kr/html/fund2/?o=v&no=1755",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "액스비스",
+      "url": "https://www.38.co.kr/html/fund/?o=v&no=2268",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "덕양에너젠",
+      "url": "https://www.38.co.kr/html/fund/?o=v&no=2267",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "세미파이브",
+      "url": "https://www.38.co.kr/html/fund/?o=v&no=2255",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "리브스메드",
+      "url": "https://www.38.co.kr/html/fund/?o=v&no=2248",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "삼진식품",
+      "url": "https://www.38.co.kr/html/fund/?o=v&no=2252",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "알지노믹스",
+      "url": "https://www.38.co.kr/html/fund/?o=v&no=2258",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "나라스페이스테크놀",
+      "url": "https://www.38.co.kr/html/fund/?o=v&no=2231",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "아크릴",
+      "url": "https://www.38.co.kr/html/fund/?o=v&no=2247",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "티엠씨",
+      "url": "https://www.38.co.kr/html/fund/?o=v&no=2242",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "쿼드메디슨",
+      "url": "https://www.38.co.kr/html/fund/?o=v&no=2237",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "이지스",
+      "url": "https://www.38.co.kr/html/fund/?o=v&no=2238",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "[액스비스]증권신고서(지분증권)",
+      "url": "http://www.38.co.kr/html/news/?m=gongsi",
+      "level": 1,
+      "parent": "http://www.38.co.kr/html/news/allnews.php3?no=1879713",
+      "children": []
+    },
+    {
+      "text": "[덕양에너젠][기재정정]증권신고서(지",
+      "url": "http://www.38.co.kr/html/news/?m=gongsi",
+      "level": 1,
+      "parent": "http://www.38.co.kr/html/news/allnews.php3?no=1879713",
+      "children": []
+    },
+    {
+      "text": "[세미파이브][발행조건확정]증권신고서",
+      "url": "http://www.38.co.kr/html/news/?m=gongsi",
+      "level": 1,
+      "parent": "http://www.38.co.kr/html/news/allnews.php3?no=1879713",
+      "children": []
+    },
+    {
+      "text": "[장외시황] 인벤테라·코스모로보틱스, 코스닥",
+      "url": "https://www.38.co.kr/html/news/allnews.php3?m=kosdaq&no=1878397",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/news/?m=nostock",
+      "children": []
+    },
+    {
+      "text": "[장외시황] 리센스메디컬, 4.0% 상승",
+      "url": "https://www.38.co.kr/html/news/allnews.php3?m=kosdaq&no=1877078",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/news/?m=nostock",
+      "children": []
+    },
+    {
+      "text": "인벤테라, 코스닥 상장 예심 승인…\"MRI",
+      "url": "https://www.38.co.kr/html/news/allnews.php3?m=kosdaq&no=1878145",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/news/?m=nostock",
+      "children": []
+    },
+    {
+      "text": "[장외시황] 액스비스, 증권신고서 제출",
+      "url": "https://www.38.co.kr/html/news/allnews.php3?m=kosdaq&no=1877692",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/news/?m=nostock",
+      "children": []
+    },
+    {
+      "text": "[장외시황] 스트라드비젼, 21.63% 상승",
+      "url": "https://www.38.co.kr/html/news/allnews.php3?m=kosdaq&no=1879450",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/news/?m=nostock",
+      "children": []
+    },
+    {
+      "text": "장외종목분석",
+      "url": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "IPO 예정분석",
+      "url": "https://www.38.co.kr/html/ipo/ipo_plan.htm",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/ipo/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "공모기업분석",
+      "url": "https://www.38.co.kr/html/fund/index.htm?o=k",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/fund/?o=ir",
+      "children": []
+    },
+    {
+      "text": "공모청약일정",
+      "url": "https://www.38.co.kr/html/fund/index.htm?o=k",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/fund/?o=ir",
+      "children": []
+    },
+    {
+      "text": "실권/일반공모",
+      "url": "https://www.38.co.kr/html/fund2/",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/trade/price/bunsuk.php",
+      "children": []
+    },
+    {
+      "text": "기사배열 기본방침",
+      "url": "https://www.38.co.kr/html/etc/adver/news_respons.html",
+      "level": 1,
+      "parent": "https://www.38.co.kr/html/etc/adver/news_respons.html",
+      "children": [
+        "https://www.38.co.kr/html/etc/adver/news_respons.html"
+      ]
+    }
+  ],
+  "link_patterns": [
+    {
+      "pattern": "/",
+      "url_type": "other",
+      "confidence": 0.8,
+      "examples": [
+        "https://www.38.co.kr/",
+        "http://stock.38.co.kr/html/trade/trade_sellbuy/index_red.html",
+        "http://stock.38.co.kr/html/trade/trade_sellbuy/",
+        "http://stock.38.co.kr/html/trade/trade_each/?table=sell",
+        "https://www.38.co.kr/html/trade/price/"
+      ]
+    },
+    {
+      "pattern": "//html?m=nostock=*",
+      "url_type": "news",
+      "confidence": 0.8,
+      "examples": [
+        "https://www.38.co.kr/html/news/?m=nostock",
+        "https://www.38.co.kr/html/news/?m=gongsi",
+        "https://www.38.co.kr/html/news/?m=IPO",
+        "https://www.38.co.kr/html/news/?m=konex",
+        "https://www.38.co.kr/html/news/?m=konexgongsi"
+      ]
+    },
+    {
+      "pattern": "//html/news/?m=kosdaq=*",
+      "url_type": "report_list",
+      "confidence": 0.8,
+      "examples": [
+        "https://www.38.co.kr/html/news/?m=kosdaq&nkey=report",
+        "https://www.38.co.kr/html/news/?m=kosdaq&nkey=report"
+      ]
+    }
+  ],
+  "data_structures": {
+    "list": {
+      "page_type": "list",
+      "title_selector": "td",
+      "date_selector": ".date",
+      "content_selector": ".list, .item, tr, li",
+      "metadata": {
+        "test_url": "http://www.38.co.kr/html/news/?m=kosdaq&nkey=report"
+      }
+    },
+    "detail": {
+      "page_type": "detail",
+      "title_selector": "h1, .title, .subject",
+      "date_selector": ".date, .published, time",
+      "content_selector": ".content, .article, .body, #content",
+      "metadata": {}
+    }
+  },
+  "checksum": "6bb7d5839fe4656f5617c2fd41f660ee"
+}

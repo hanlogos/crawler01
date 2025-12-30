@@ -1,0 +1,10 @@
+{
+  "www.38.co.kr": {
+    "domain": "www.38.co.kr",
+    "base_delay": 3.0,
+    "current_delay": 2.7,
+    "success_rate": 1.0,
+    "avg_response_time": 0.10735183954238892,
+    "consecutive_failures": 0
+  }
+}

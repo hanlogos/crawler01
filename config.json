@@ -1,0 +1,18 @@
+{
+  "crawler": {
+    "delay": 3.0,
+    "max_retries": 3,
+    "retry_delay": 5.0,
+    "timeout": 10
+  },
+  "crawl_settings": {
+    "days": 1,
+    "max_reports": 100
+  },
+  "output": {
+    "json_filename": "38com_reports.json",
+    "csv_filename": "38com_reports.csv"
+  }
+}
+
+

@@ -1,0 +1,28 @@
+{
+  "sites": [
+    {
+      "site_id": "38com",
+      "site_name": "38커뮤니케이션",
+      "site_url": "http://www.38.co.kr",
+      "status": "idle",
+      "mode": "auto",
+      "total_collected": 0,
+      "total_failed": 0,
+      "last_collected": null,
+      "last_error": null,
+      "current_progress": 0,
+      "total_target": 0,
+      "schedule": {
+        "interval": "daily",
+        "time": "09:00"
+      },
+      "next_run": "2025-12-31T09:00:00",
+      "days": 1,
+      "max_reports": 50,
+      "fake_face_profile": "casual",
+      "created_at": "2025-12-30T17:00:29.927326",
+      "updated_at": "2025-12-30T17:00:29.937595"
+    }
+  ],
+  "saved_at": "2025-12-30T17:00:29.937595"
+}
