@@ -149,18 +149,44 @@ class SearchSummaryGenerator:
                     f"   {result.summary or result.content[:200] if result.content else ''}"
                 )
             
-            prompt = f"""다음은 '{keyword}' 키워드로 검색한 결과입니다. 
-이 검색 결과를 한국어로 요약하여 주요 내용을 3-5문장으로 정리해주세요.
-반드시 한국어로만 응답하세요.
+            prompt = f"""당신은 한국어 전문가입니다. 다음 검색 결과를 한국어로만 요약해주세요.
+
+중요: 
+- 반드시 한국어로만 작성하세요. 영어는 절대 사용하지 마세요.
+- "Here is", "Summary", "The following" 같은 영어 표현 금지
+- 자연스러운 한국어 문장으로 작성하세요.
+
+검색 키워드: '{keyword}'
 
 검색 결과:
 {chr(10).join(results_text)}
 
-요약 (한국어로 작성):
+위 검색 결과를 한국어로 요약하여 주요 내용을 3-5문장으로 정리해주세요. 영어는 절대 사용하지 마세요:
 """
             
             summary = self.ollama.process(prompt)
-            return summary.strip()
+            summary = summary.strip()
+            
+            # 영어로 시작하는 경우 제거
+            english_prefixes = [
+                "Here is", "Here are", "Summary:", "The following", 
+                "Based on", "According to", "This is", "These are"
+            ]
+            for prefix in english_prefixes:
+                if summary.startswith(prefix):
+                    # 영어 부분 제거하고 한글 부분만 추출
+                    lines = summary.split('\n')
+                    korean_lines = [line for line in lines if not any(line.strip().startswith(p) for p in english_prefixes)]
+                    if korean_lines:
+                        summary = '\n'.join(korean_lines).strip()
+                    break
+            
+            # 영어만 있는 경우 간단한 한글 요약으로 대체
+            if not any('\uac00' <= char <= '\ud7a3' for char in summary):
+                # 한글이 하나도 없으면 간단한 요약 생성
+                return self._generate_simple_summary(keyword, results)
+            
+            return summary
         
         except Exception as e:
             logger.error(f"AI 요약 생성 실패: {e}")
@@ -253,17 +279,41 @@ class SearchSummaryGenerator:
             for i, result in enumerate(results[:5], 1):
                 results_text.append(f"{i}. [{result.source}] {result.title}")
             
-            prompt = f"""다음은 {stock_name}에 대한 검색 결과입니다.
-이 종목에 대한 주요 내용을 2-3문장으로 요약해주세요.
+            prompt = f"""당신은 한국어 전문가입니다. 다음 종목에 대한 검색 결과를 한국어로만 요약해주세요.
+
+중요: 
+- 반드시 한국어로만 작성하세요. 영어는 절대 사용하지 마세요.
+- 자연스러운 한국어 문장으로 작성하세요.
+
+종목명: {stock_name}
 
 검색 결과:
 {chr(10).join(results_text)}
 
-요약:
+위 검색 결과를 바탕으로 {stock_name}에 대한 주요 내용을 2-3문장으로 한국어로만 요약해주세요:
 """
             
             summary = self.ollama.process(prompt)
-            return summary.strip()
+            summary = summary.strip()
+            
+            # 영어로 시작하는 경우 제거
+            english_prefixes = [
+                "Here is", "Here are", "Summary:", "The following", 
+                "Based on", "According to", "This is", "These are"
+            ]
+            for prefix in english_prefixes:
+                if summary.startswith(prefix):
+                    lines = summary.split('\n')
+                    korean_lines = [line for line in lines if not any(line.strip().startswith(p) for p in english_prefixes)]
+                    if korean_lines:
+                        summary = '\n'.join(korean_lines).strip()
+                    break
+            
+            # 영어만 있는 경우 간단한 한글 요약으로 대체
+            if not any('\uac00' <= char <= '\ud7a3' for char in summary):
+                return f"{stock_name}에 대한 {len(results)}개의 검색 결과를 찾았습니다."
+            
+            return summary
         
         except Exception as e:
             logger.error(f"종목 요약 생성 실패: {e}")

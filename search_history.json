@@ -39,7 +39,95 @@
       "filters": {},
       "created_at": "2025-12-30T21:56:21.431296",
       "result_count": 2
+    },
+    {
+      "query_id": "Q_20251230223417",
+      "keyword": "삼성전자",
+      "search_type": "all",
+      "filters": {},
+      "created_at": "2025-12-30T22:34:17.238138",
+      "result_count": 2
+    },
+    {
+      "query_id": "Q_20251230223423",
+      "keyword": "삼성전자",
+      "search_type": "all",
+      "filters": {},
+      "created_at": "2025-12-30T22:34:23.999381",
+      "result_count": 2
+    },
+    {
+      "query_id": "Q_20251230223807",
+      "keyword": "삼성전자",
+      "search_type": "all",
+      "filters": {},
+      "created_at": "2025-12-30T22:38:07.380336",
+      "result_count": 2
+    },
+    {
+      "query_id": "Q_20251230225106",
+      "keyword": "삼성전자",
+      "search_type": "all",
+      "filters": {},
+      "created_at": "2025-12-30T22:51:06.508016",
+      "result_count": 2
+    },
+    {
+      "query_id": "Q_20251230225737",
+      "keyword": "삼성전자",
+      "search_type": "all",
+      "filters": {},
+      "created_at": "2025-12-30T22:57:37.606965",
+      "result_count": 2
+    },
+    {
+      "query_id": "Q_20251230230430",
+      "keyword": "반도체",
+      "search_type": "all",
+      "filters": {},
+      "created_at": "2025-12-30T23:04:30.346865",
+      "result_count": 0
+    },
+    {
+      "query_id": "Q_20251230230442",
+      "keyword": "삼성생며ㅇ",
+      "search_type": "all",
+      "filters": {},
+      "created_at": "2025-12-30T23:04:42.450091",
+      "result_count": 0
+    },
+    {
+      "query_id": "Q_20251230230448",
+      "keyword": "삼성생명",
+      "search_type": "all",
+      "filters": {},
+      "created_at": "2025-12-30T23:04:48.742261",
+      "result_count": 0
+    },
+    {
+      "query_id": "Q_20251230231336",
+      "keyword": "삼성전자",
+      "search_type": "news",
+      "filters": {},
+      "created_at": "2025-12-30T23:13:36.346042",
+      "result_count": 0
+    },
+    {
+      "query_id": "Q_20251230231508",
+      "keyword": "삼성전자",
+      "search_type": "news",
+      "filters": {},
+      "created_at": "2025-12-30T23:15:08.864766",
+      "result_count": 0
+    },
+    {
+      "query_id": "Q_20251230231512",
+      "keyword": "삼성전자",
+      "search_type": "all",
+      "filters": {},
+      "created_at": "2025-12-30T23:15:12.501362",
+      "result_count": 2
     }
   ],
-  "saved_at": "2025-12-30T21:56:21.431296"
+  "saved_at": "2025-12-30T23:15:12.502355"
 }

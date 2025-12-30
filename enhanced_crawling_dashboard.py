@@ -23,6 +23,7 @@ from typing import Dict, List, Optional
 from enum import Enum
 import logging
 import json
+import os
 
 # Windows 콘솔 인코딩 설정
 if sys.platform == 'win32':
@@ -721,6 +722,41 @@ class EnhancedCrawlingDashboard(QMainWindow):
                 logger.error(f"요약 생성기 초기화 실패: {e2}")
                 self.summary_generator = None
         
+        # 통합 검색 엔진 초기화 (DB 기반, a+b+c 기능)
+        self.integrated_search_engine = None
+        self.use_integrated_search = False  # 기본값: 기본 검색 사용
+        try:
+            from integrated_search_engine import IntegratedSearchEngine
+            
+            # DB 연결 설정 (환경변수 또는 기본값)
+            import os
+            DB_PARAMS = {
+                'host': os.getenv('DB_HOST', 'localhost'),
+                'port': int(os.getenv('DB_PORT', 5432)),
+                'database': os.getenv('DB_NAME', 'abiseu'),
+                'user': os.getenv('DB_USER', 'postgres'),
+                'password': os.getenv('DB_PASSWORD', '')
+            }
+            
+            # 비밀번호가 있으면 통합 검색 엔진 초기화
+            if DB_PARAMS['password']:
+                try:
+                    self.integrated_search_engine = IntegratedSearchEngine(DB_PARAMS, enable_ai=True)
+                    # 연결 테스트
+                    self.integrated_search_engine.connect()
+                    self.integrated_search_engine.disconnect()
+                    logger.info("✅ 통합 검색 엔진 초기화 완료 (a+b+c 기능 활성화)")
+                except Exception as e:
+                    logger.warning(f"통합 검색 엔진 연결 실패: {e}")
+                    self.integrated_search_engine = None
+            else:
+                logger.info("DB 비밀번호가 설정되지 않아 통합 검색 엔진을 사용할 수 없습니다.")
+                logger.info("기본 검색 엔진만 사용됩니다.")
+        except ImportError as e:
+            logger.warning(f"통합 검색 엔진 모듈을 찾을 수 없습니다: {e}")
+        except Exception as e:
+            logger.warning(f"통합 검색 엔진 초기화 실패 (기본 검색 사용): {e}")
+        
         # UI 초기화
         self._init_ui()
         
@@ -818,6 +854,20 @@ class EnhancedCrawlingDashboard(QMainWindow):
         search_group = QGroupBox("🔍 키워드 검색")
         search_layout = QVBoxLayout()
         
+        # 검색 모드 선택 (기본/통합)
+        mode_layout = QHBoxLayout()
+        mode_label = QLabel("검색 모드:")
+        self.search_mode_combo = QComboBox()
+        self.search_mode_combo.addItems(["기본 검색 (빠름)", "통합 검색 (a+b+c)"])
+        if not self.integrated_search_engine:
+            self.search_mode_combo.setEnabled(False)
+            self.search_mode_combo.setToolTip("DB 연결 필요")
+        self.search_mode_combo.currentIndexChanged.connect(self.on_search_mode_changed)
+        mode_layout.addWidget(mode_label)
+        mode_layout.addWidget(self.search_mode_combo)
+        mode_layout.addStretch()
+        search_layout.addLayout(mode_layout)
+        
         # 검색 입력
         input_layout = QHBoxLayout()
         self.search_input = QLineEdit()
@@ -869,20 +919,20 @@ class EnhancedCrawlingDashboard(QMainWindow):
         results_layout = QVBoxLayout()
         
         self.results_table = QTableWidget()
-            self.results_table.setColumnCount(5)
-            self.results_table.setHorizontalHeaderLabels([
-                "제목", "소스", "관련도", "종목코드", "날짜"
-            ])
-            self.results_table.setSelectionBehavior(QTableWidget.SelectRows)
-            self.results_table.doubleClicked.connect(self.on_result_clicked)
-            
-            # 칸 비율 설정: 제목 넓게, 날짜 짧게
-            header = self.results_table.horizontalHeader()
-            header.setSectionResizeMode(0, QHeaderView.Stretch)  # 제목: 자동 확장
-            header.setSectionResizeMode(1, QHeaderView.ResizeToContents)  # 소스: 내용에 맞춤
-            header.setSectionResizeMode(2, QHeaderView.ResizeToContents)  # 관련도: 내용에 맞춤
-            header.setSectionResizeMode(3, QHeaderView.ResizeToContents)  # 종목코드: 내용에 맞춤
-            header.setSectionResizeMode(4, QHeaderView.ResizeToContents)  # 날짜: 내용에 맞춤 (짧게)
+        self.results_table.setColumnCount(5)
+        self.results_table.setHorizontalHeaderLabels([
+            "제목", "소스", "관련도", "종목코드", "날짜"
+        ])
+        self.results_table.setSelectionBehavior(QTableWidget.SelectRows)
+        self.results_table.doubleClicked.connect(self.on_result_clicked)
+        
+        # 칸 비율 설정: 제목 넓게, 날짜 짧게
+        header = self.results_table.horizontalHeader()
+        header.setSectionResizeMode(0, QHeaderView.Stretch)  # 제목: 자동 확장
+        header.setSectionResizeMode(1, QHeaderView.ResizeToContents)  # 소스: 내용에 맞춤
+        header.setSectionResizeMode(2, QHeaderView.ResizeToContents)  # 관련도: 내용에 맞춤
+        header.setSectionResizeMode(3, QHeaderView.ResizeToContents)  # 종목코드: 내용에 맞춤
+        header.setSectionResizeMode(4, QHeaderView.ResizeToContents)  # 날짜: 내용에 맞춤 (짧게)
         results_layout.addWidget(self.results_table)
         
         results_group.setLayout(results_layout)
@@ -905,6 +955,19 @@ class EnhancedCrawlingDashboard(QMainWindow):
         
         widget.setLayout(layout)
         return widget
+    
+    def on_search_mode_changed(self, index):
+        """검색 모드 변경"""
+        self.use_integrated_search = (index == 1)
+        if self.use_integrated_search and not self.integrated_search_engine:
+            QMessageBox.warning(
+                self, 
+                "경고", 
+                "통합 검색을 사용하려면 DB 연결이 필요합니다.\n"
+                "환경변수 DB_PASSWORD를 설정하거나 코드에서 DB_PARAMS를 수정하세요."
+            )
+            self.search_mode_combo.setCurrentIndex(0)
+            self.use_integrated_search = False
     
     def perform_search(self):
         """검색 실행"""
@@ -935,31 +998,59 @@ class EnhancedCrawlingDashboard(QMainWindow):
         
         # 검색 실행
         try:
-            results, query = self.search_engine.search(keyword, search_type=search_type, limit=50)
-            
-            # 히스토리 저장
-            if self.search_history:
+            # 통합 검색 사용 여부 확인
+            if self.use_integrated_search and self.integrated_search_engine:
+                # 통합 검색 (a+b+c)
+                enhanced_result = self.integrated_search_engine.search(
+                    keyword, 
+                    limit=50, 
+                    include_ai_insight=True
+                )
+                
+                # 통합 검색 결과 표시
+                self.display_integrated_results(enhanced_result)
+                
+            else:
+                # 기본 검색 (기존 방식)
+                results, query = self.search_engine.search(keyword, search_type=search_type, limit=50)
+                
+                # 히스토리 저장
+                if self.search_history:
+                    try:
+                        self.search_history.add_search(query)
+                    except Exception as e:
+                        logger.warning(f"히스토리 저장 실패: {e}")
+                
+                # 결과 표시
                 try:
-                    self.search_history.add_search(query)
+                    self.display_results(results)
                 except Exception as e:
-                    logger.warning(f"히스토리 저장 실패: {e}")
-            
-            # 결과 표시
-            try:
-                self.display_results(results)
-            except Exception as e:
-                logger.error(f"결과 표시 실패: {e}")
-                import traceback
-                logger.error(traceback.format_exc())
-            
-            # 요약 생성
-            if self.summary_generator:
-                try:
-                    summary = self.summary_generator.generate_summary(keyword, results)
-                    self.display_summary(summary)
-                except Exception as e:
-                    logger.error(f"요약 생성 실패: {e}")
-                    # 간단한 요약 표시
+                    logger.error(f"결과 표시 실패: {e}")
+                    import traceback
+                    logger.error(traceback.format_exc())
+                
+                # 요약 생성
+                if self.summary_generator:
+                    try:
+                        summary = self.summary_generator.generate_summary(keyword, results)
+                        self.display_summary(summary)
+                    except Exception as e:
+                        logger.error(f"요약 생성 실패: {e}")
+                        # 간단한 요약 표시
+                        simple_summary = {
+                            'keyword': keyword,
+                            'total_results': len(results),
+                            'summary': f"'{keyword}' 검색 결과 {len(results)}개를 찾았습니다.",
+                            'key_findings': [],
+                            'sources': {},
+                            'stock_codes': []
+                        }
+                        try:
+                            self.display_summary(simple_summary)
+                        except:
+                            pass
+                else:
+                    # 요약 생성기가 없으면 간단한 메시지만
                     simple_summary = {
                         'keyword': keyword,
                         'total_results': len(results),
@@ -972,35 +1063,21 @@ class EnhancedCrawlingDashboard(QMainWindow):
                         self.display_summary(simple_summary)
                     except:
                         pass
-            else:
-                # 요약 생성기가 없으면 간단한 메시지만
-                simple_summary = {
-                    'keyword': keyword,
-                    'total_results': len(results),
-                    'summary': f"'{keyword}' 검색 결과 {len(results)}개를 찾았습니다.",
-                    'key_findings': [],
-                    'sources': {},
-                    'stock_codes': []
-                }
-                try:
-                    self.display_summary(simple_summary)
-                except:
-                    pass
-            
-            # 즐겨찾기 자동 추가 (자주 검색한 경우)
-            if self.favorite_manager and len(results) > 0:
-                try:
-                    # 종목 코드가 있으면 즐겨찾기 추가
-                    for result in results[:3]:
-                        if result.stock_codes:
-                            for stock_code in result.stock_codes[:1]:
-                                self.favorite_manager.add_favorite(
-                                    'stock',
-                                    f"종목 {stock_code}",
-                                    stock_code
-                                )
-                except Exception as e:
-                    logger.warning(f"즐겨찾기 추가 실패: {e}")
+                
+                # 즐겨찾기 자동 추가 (자주 검색한 경우)
+                if self.favorite_manager and len(results) > 0:
+                    try:
+                        # 종목 코드가 있으면 즐겨찾기 추가
+                        for result in results[:3]:
+                            if result.stock_codes:
+                                for stock_code in result.stock_codes[:1]:
+                                    self.favorite_manager.add_favorite(
+                                        'stock',
+                                        f"종목 {stock_code}",
+                                        stock_code
+                                    )
+                    except Exception as e:
+                        logger.warning(f"즐겨찾기 추가 실패: {e}")
         
         except Exception as e:
             import traceback
@@ -1094,6 +1171,170 @@ class EnhancedCrawlingDashboard(QMainWindow):
             text += f"\n📚 소스별: {', '.join([f'{k} {v}개' for k, v in summary['sources'].items()])}"
         
         self.summary_text.setText(text)
+    
+    def display_integrated_results(self, enhanced_result):
+        """통합 검색 결과 표시 (a+b+c)"""
+        from enhanced_search_result import EnhancedSearchResult
+        
+        if not isinstance(enhanced_result, EnhancedSearchResult):
+            logger.error("통합 검색 결과 형식이 올바르지 않습니다.")
+            return
+        
+        # 오류 처리
+        if enhanced_result.error and enhanced_result.error.has_error:
+            error_msg = enhanced_result.error.get_user_message()
+            logger.error(f"통합 검색 오류: {error_msg}")
+            
+            # 사용자에게 친화적인 메시지 표시
+            if "테이블이 없습니다" in error_msg or "does not exist" in error_msg.lower():
+                detailed_msg = (
+                    f"❌ 검색 오류\n\n"
+                    f"{error_msg}\n\n"
+                    f"해결 방법:\n"
+                    f"1. PostgreSQL이 실행 중인지 확인\n"
+                    f"2. 다음 명령으로 스키마 생성:\n"
+                    f"   psql -U postgres -d abiseu -f news_ingestion_schema.sql\n"
+                    f"3. 뉴스 수집 서비스 실행:\n"
+                    f"   python news_ingestion_service.py"
+                )
+            elif "연결" in error_msg or "connection" in error_msg.lower():
+                detailed_msg = (
+                    f"❌ DB 연결 오류\n\n"
+                    f"{error_msg}\n\n"
+                    f"확인 사항:\n"
+                    f"1. PostgreSQL 서비스 실행 중?\n"
+                    f"2. DB 비밀번호가 올바른가? (현재: {'설정됨' if os.getenv('DB_PASSWORD') else '미설정'})\n"
+                    f"3. DB_HOST, DB_PORT, DB_NAME 환경변수 확인"
+                )
+            else:
+                detailed_msg = f"❌ 검색 오류\n\n{error_msg}"
+            
+            QMessageBox.warning(self, "통합 검색 오류", detailed_msg)
+            
+            # 빈 결과 표시
+            self.results_table.setRowCount(0)
+            self.summary_text.setText(f"검색 오류가 발생했습니다.\n\n{error_msg}")
+            return
+        
+        # 결과 항목 표시
+        items = enhanced_result.items
+        if not items:
+            self.results_table.setRowCount(0)
+            self.summary_text.setText("검색 결과가 없습니다.")
+            return
+        
+        # 테이블에 결과 표시 (신뢰도 포함)
+        try:
+            self.results_table.setRowCount(len(items))
+            
+            for i, item in enumerate(items):
+                try:
+                    # 제목
+                    title = str(item.title) if item.title else "-"
+                    self.results_table.setItem(i, 0, QTableWidgetItem(title))
+                    
+                    # 소스 (Tier 정보 포함)
+                    source_icon = {"report": "📄", "news": "📰", "stock": "📈"}.get(item.item_type, "📋")
+                    tier_text = f"T{item.source_tier.value}" if hasattr(item, 'source_tier') else ""
+                    source_text = f"{source_icon} {item.source} {tier_text}".strip()
+                    self.results_table.setItem(i, 1, QTableWidgetItem(source_text))
+                    
+                    # 관련도 (신뢰도 점수 포함)
+                    relevance_score = float(item.relevance_score) if hasattr(item, 'relevance_score') else 0.0
+                    credibility = item.credibility.overall if hasattr(item, 'credibility') else 0.0
+                    relevance_text = f"{relevance_score:.2f} (신뢰도: {int(credibility*100)}%)"
+                    relevance_item = QTableWidgetItem(relevance_text)
+                    if credibility >= 0.75:
+                        relevance_item.setForeground(QColor(0, 150, 0))
+                    elif credibility >= 0.50:
+                        relevance_item.setForeground(QColor(200, 150, 0))
+                    else:
+                        relevance_item.setForeground(QColor(150, 0, 0))
+                    self.results_table.setItem(i, 2, relevance_item)
+                    
+                    # 종목코드
+                    stock_codes = item.stock_codes if hasattr(item, 'stock_codes') and item.stock_codes else []
+                    stock_text = ", ".join(str(code) for code in stock_codes[:3]) if stock_codes else "-"
+                    self.results_table.setItem(i, 3, QTableWidgetItem(stock_text))
+                    
+                    # 날짜 (신선도 표시)
+                    if hasattr(item, 'time_info') and item.time_info:
+                        try:
+                            date_str = item.time_info.published_at.strftime("%m-%d")
+                            freshness = item.time_info.freshness
+                            freshness_icon = {"hot": "🔥", "fresh": "✨", "normal": "📅", "old": "🗄️"}.get(freshness.value if hasattr(freshness, 'value') else freshness, "")
+                            date_str = f"{freshness_icon} {date_str}" if freshness_icon else date_str
+                        except:
+                            date_str = "-"
+                    else:
+                        date_str = "-"
+                    self.results_table.setItem(i, 4, QTableWidgetItem(date_str))
+                except Exception as e:
+                    logger.error(f"결과 {i} 표시 실패: {e}")
+                    continue
+            
+            # 칸 비율 재설정
+            header = self.results_table.horizontalHeader()
+            header.setSectionResizeMode(0, QHeaderView.Stretch)
+            for col in range(1, 5):
+                header.setSectionResizeMode(col, QHeaderView.ResizeToContents)
+        except Exception as e:
+            logger.error(f"통합 결과 표시 중 오류: {e}")
+            import traceback
+            logger.error(traceback.format_exc())
+        
+        # 요약 및 AI 인사이트 표시
+        summary_text = f"🔍 검색어: {enhanced_result.query}\n"
+        summary_text += f"📊 총 결과: {enhanced_result.total_count}개\n"
+        
+        # 시스템 메트릭 (b)
+        if enhanced_result.metrics:
+            summary_text += f"⏱️ 검색 시간: {enhanced_result.metrics.search_time_ms}ms\n"
+            summary_text += f"📈 크롤러 상태: {enhanced_result.metrics.get_status_summary()}\n"
+            summary_text += f"🕐 데이터 신선도: {enhanced_result.metrics.data_freshness_minutes}분 전\n\n"
+        
+        # AI 인사이트 (a)
+        if enhanced_result.ai_insight:
+            summary_text += f"🤖 AI 인사이트:\n"
+            summary_text += f"  {enhanced_result.ai_insight.get_emoji()} 추천: {enhanced_result.ai_insight.recommendation}\n"
+            summary_text += f"  신뢰도: {int(enhanced_result.ai_insight.confidence * 100)}%\n\n"
+            
+            if enhanced_result.ai_insight.key_points:
+                summary_text += "📌 핵심 포인트:\n"
+                for point in enhanced_result.ai_insight.key_points:
+                    summary_text += f"  • {point}\n"
+                summary_text += "\n"
+            
+            if enhanced_result.ai_insight.reasoning:
+                summary_text += "✅ 근거:\n"
+                for reason in enhanced_result.ai_insight.reasoning:
+                    summary_text += f"  • {reason}\n"
+                summary_text += "\n"
+            
+            if enhanced_result.ai_insight.risks:
+                summary_text += "⚠️ 리스크:\n"
+                for risk in enhanced_result.ai_insight.risks:
+                    summary_text += f"  • {risk}\n"
+                summary_text += "\n"
+        
+        # 타입별 통계
+        if enhanced_result.by_type:
+            summary_text += "📚 소스별:\n"
+            for source_type, count in enhanced_result.by_type.items():
+                summary_text += f"  • {source_type}: {count}개\n"
+            summary_text += "\n"
+        
+        # 긴급 뉴스
+        if enhanced_result.urgent_count > 0:
+            summary_text += f"🔥 긴급 뉴스: {enhanced_result.urgent_count}건\n\n"
+        
+        # 액션 버튼 (a)
+        if enhanced_result.action_buttons:
+            summary_text += "🎯 빠른 액션:\n"
+            for btn in enhanced_result.action_buttons[:4]:
+                summary_text += f"  {btn.icon} {btn.label}\n"
+        
+        self.summary_text.setText(summary_text)
     
     def on_result_clicked(self, index):
         """결과 클릭 처리"""

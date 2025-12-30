@@ -276,13 +276,19 @@ class SiteCrawlingManager:
             return
         
         try:
-            # 실제 크롤링 로직 (여기서는 시뮬레이션)
+            # 실제 크롤링 로직
             from integrated_crawler_manager import IntegratedCrawlerManager
             
             manager = IntegratedCrawlerManager(
                 use_fake_face=True,
                 fake_face_profile=state.fake_face_profile
             )
+            
+            # total_target이 설정되지 않았으면 기본값 설정
+            if state.total_target == 0:
+                state.total_target = state.max_reports
+            
+            self.logger.info(f"크롤링 시작: {site_id} (목표: {state.total_target}개)")
             
             # 크롤링 실행
             while state.status == CrawlingStatus.RUNNING:
@@ -291,34 +297,80 @@ class SiteCrawlingManager:
                     time.sleep(1)
                     continue
                 
-                # 크롤링 실행 (시뮬레이션)
-                # 실제로는 crawler.crawl_recent_reports() 호출
-                state.current_progress += 1
-                state.total_collected += 1
-                state.last_collected = datetime.now()
-                state.updated_at = datetime.now()
-                
-                self._save_states()
-                
-                # 대기 (시뮬레이션)
-                time.sleep(2)
-                
-                # 목표 달성 확인
-                if state.current_progress >= state.total_target:
-                    state.status = CrawlingStatus.IDLE
+                # 정지 확인
+                if state.status == CrawlingStatus.STOPPED:
                     break
+                
+                try:
+                    # 실제 크롤링 실행
+                    # 38com 사이트인 경우 실제 크롤러 사용
+                    if site_id == "38com":
+                        from crawler_38com import ThirtyEightComCrawler
+                        crawler = ThirtyEightComCrawler(
+                            delay=3.0,
+                            max_retries=3,
+                            use_adaptive=True
+                        )
+                        
+                        # 최근 보고서 크롤링
+                        self.logger.info(f"크롤링 실행 중: {site_id} (days={state.days}, max={state.max_reports})")
+                        reports = crawler.crawl_recent_reports(
+                            days=state.days,
+                            max_reports=state.max_reports
+                        )
+                        
+                        if reports:
+                            state.current_progress = len(reports)
+                            state.total_collected += len(reports)
+                            state.last_collected = datetime.now()
+                            state.updated_at = datetime.now()
+                            self.logger.info(f"✅ 크롤링 완료: {site_id} - {len(reports)}개 보고서 수집")
+                        else:
+                            self.logger.warning(f"⚠️  크롤링 결과 없음: {site_id}")
+                        
+                        # 크롤링 완료 후 종료
+                        state.status = CrawlingStatus.IDLE
+                        break
+                    else:
+                        # 다른 사이트는 통합 크롤러 사용
+                        # 여기서는 시뮬레이션 (필요시 확장)
+                        state.current_progress += 1
+                        state.total_collected += 1
+                        state.last_collected = datetime.now()
+                        state.updated_at = datetime.now()
+                        
+                        self._save_states()
+                        
+                        # 대기
+                        time.sleep(2)
+                        
+                        # 목표 달성 확인
+                        if state.current_progress >= state.total_target:
+                            state.status = CrawlingStatus.IDLE
+                            break
+                
+                except Exception as e:
+                    self.logger.error(f"크롤링 실행 중 오류 ({site_id}): {e}")
+                    state.total_failed += 1
+                    state.last_error = str(e)
+                    # 오류 발생해도 계속 진행 (재시도)
+                    time.sleep(5)
+                    continue
         
         except Exception as e:
             state.status = CrawlingStatus.ERROR
             state.last_error = str(e)
             state.updated_at = datetime.now()
-            self.logger.error(f"크롤링 오류 ({site_id}): {e}")
+            self.logger.error(f"크롤링 워커 오류 ({site_id}): {e}")
+            import traceback
+            self.logger.error(traceback.format_exc())
         
         finally:
             state.updated_at = datetime.now()
             self._save_states()
             if site_id in self._running_tasks:
                 del self._running_tasks[site_id]
+            self.logger.info(f"크롤링 워커 종료: {site_id}")
     
     def _load_states(self):
         """상태 로드"""
