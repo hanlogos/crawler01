@@ -95,6 +95,7 @@
 **통합된 크롤러**:
 - ✅ 한경 컨센서스 (`hankyung_consensus`)
 - ✅ 네이버 금융 리서치 (`naver_finance`)
+- ✅ 38커뮤니케이션 (`38com`)
 
 ## 📊 전체 데이터 흐름
 
@@ -217,6 +218,7 @@ manager.start_crawling("naver_finance", days=7, max_reports=50)
 - `NAVER_FALLBACK_COMPLETE.md`: 네이버 보완 기능 완료 보고서
 - `PIPELINE_INTEGRATION_COMPLETE.md`: 한경 컨센서스 파이프라인 통합 완료 보고서
 - `NAVER_FINANCE_PIPELINE_INTEGRATION.md`: 네이버 금융 파이프라인 통합 완료 보고서
+- `ALL_CRAWLERS_PIPELINE_INTEGRATION.md`: 모든 크롤러 파이프라인 통합 완료 보고서
 - `COMPLETE_SYSTEM_INTEGRATION_SUMMARY.md`: 전체 시스템 통합 요약 (본 문서)
 
 ## 🎯 주요 개선 효과
@@ -250,7 +252,7 @@ manager.start_crawling("naver_finance", days=7, max_reports=50)
 
 ### 2. 다른 크롤러 통합
 - ✅ 네이버 금융 크롤러에 파이프라인 통합 (완료)
-- 38커뮤니케이션 크롤러에 파이프라인 통합 (선택)
+- ✅ 38커뮤니케이션 크롤러에 파이프라인 통합 (완료)
 
 ### 3. 고급 기능
 - 리포트 매칭 정확도 향상 (머신러닝)
@@ -294,5 +296,20 @@ manager.start_crawling("naver_finance", days=7, max_reports=50)
 
 ## 🎉 완료!
 
-한경 컨센서스 크롤러부터 정규화 시스템, PostgreSQL 저장소, 파이프라인 통합까지의 모든 작업이 완료되었습니다. 이제 크롤링한 리포트가 자동으로 정규화되어 데이터베이스에 저장됩니다.
+한경 컨센서스 크롤러부터 정규화 시스템, PostgreSQL 저장소, 파이프라인 통합까지의 모든 작업이 완료되었습니다.
+
+### 통합 완료 현황
+
+**크롤러 파이프라인 통합**:
+- ✅ 한경 컨센서스 (`hankyung_consensus`)
+- ✅ 네이버 금융 리서치 (`naver_finance`)
+- ✅ 38커뮤니케이션 (`38com`)
+
+**핵심 시스템**:
+- ✅ 정규화 시스템 (`korea_normalize.py`)
+- ✅ PostgreSQL 저장소 (`analyst_snapshot_store.py`)
+- ✅ 파이프라인 모듈 (`analyst_report_pipeline.py`)
+- ✅ 자동 통합 (`site_crawling_manager.py`)
+
+이제 **모든 크롤러**에서 수집한 리포트가 자동으로 정규화되어 데이터베이스에 저장됩니다.
 
