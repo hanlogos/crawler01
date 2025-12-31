@@ -325,6 +325,33 @@ class SiteCrawlingManager:
                             state.last_collected = datetime.now()
                             state.updated_at = datetime.now()
                             self.logger.info(f"✅ 크롤링 완료: {site_id} - {len(reports)}개 보고서 수집")
+                            
+                            # 정규화 및 저장 파이프라인 통합 (옵션)
+                            try:
+                                from analyst_report_pipeline import AnalystReportPipeline
+                                import os
+                                
+                                db_params = {
+                                    'host': os.getenv('DB_HOST', 'localhost'),
+                                    'database': os.getenv('DB_NAME', 'crawler_db'),
+                                    'user': os.getenv('DB_USER', 'postgres'),
+                                    'password': os.getenv('DB_PASSWORD', '')
+                                }
+                                
+                                # DB 저장 활성화 여부 확인
+                                enable_db = os.getenv('ENABLE_DB_STORAGE', 'false').lower() == 'true'
+                                
+                                if enable_db and db_params.get('password'):
+                                    pipeline = AnalystReportPipeline(db_params, enable_db=True)
+                                    saved_count = pipeline.process_reports(reports, source='38com', skip_errors=True)
+                                    self.logger.info(f"💾 DB 저장 완료: {saved_count}개 리포트 저장")
+                                else:
+                                    self.logger.debug("DB 저장 비활성화 (ENABLE_DB_STORAGE=false 또는 DB_PASSWORD 없음)")
+                                    
+                            except ImportError:
+                                self.logger.debug("정규화 파이프라인 모듈을 사용할 수 없습니다. 크롤링만 수행합니다.")
+                            except Exception as e:
+                                self.logger.warning(f"정규화/저장 실패 (크롤링은 성공): {e}")
                         else:
                             self.logger.warning(f"⚠️  크롤링 결과 없음: {site_id}")
                         
