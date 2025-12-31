@@ -387,6 +387,90 @@ class SiteCrawlingManager:
                         # 크롤링 완료 후 종료
                         state.status = CrawlingStatus.IDLE
                         break
+                    elif site_id == "naver_finance":
+                        # 네이버 금융 리서치 크롤러 사용
+                        from crawler_naver_finance_research import NaverFinanceResearchCrawler
+                        crawler = NaverFinanceResearchCrawler(
+                            delay=2.0,
+                            max_retries=3,
+                            use_adaptive=True
+                        )
+                        
+                        # 최근 보고서 크롤링 (종목별 검색은 별도로 처리)
+                        # 여기서는 최근 리포트 목록에서 수집 (실제 구현 필요 시 확장)
+                        self.logger.info(f"크롤링 실행 중: {site_id} (days={state.days}, max={state.max_reports})")
+                        
+                        # 네이버 금융은 종목별 검색이 주 기능이므로, 
+                        # 여기서는 기본 크롤링만 수행 (종목별 검색은 별도 API 사용)
+                        # 실제 구현 시: 주요 종목 리스트를 순회하며 검색
+                        reports = []
+                        
+                        # 주요 종목 리스트 (예시)
+                        major_stocks = [
+                            ("삼성전자", "005930"),
+                            ("SK하이닉스", "000660"),
+                            ("LG에너지솔루션", "373220"),
+                            ("현대차", "005380"),
+                            ("NAVER", "035420")
+                        ]
+                        
+                        for stock_name, stock_code in major_stocks[:min(5, state.max_reports // 10)]:
+                            try:
+                                stock_reports = crawler.search_by_stock(
+                                    stock_name=stock_name,
+                                    stock_code=stock_code,
+                                    days=state.days,
+                                    max_reports=state.max_reports // len(major_stocks),
+                                    download_pdf=False
+                                )
+                                reports.extend(stock_reports)
+                                
+                                if len(reports) >= state.max_reports:
+                                    break
+                                    
+                            except Exception as e:
+                                self.logger.warning(f"종목 검색 실패 ({stock_name}): {e}")
+                                continue
+                        
+                        if reports:
+                            state.current_progress = len(reports)
+                            state.total_collected += len(reports)
+                            state.last_collected = datetime.now()
+                            state.updated_at = datetime.now()
+                            self.logger.info(f"✅ 크롤링 완료: {site_id} - {len(reports)}개 보고서 수집")
+                            
+                            # 정규화 및 저장 파이프라인 통합 (옵션)
+                            try:
+                                from analyst_report_pipeline import AnalystReportPipeline
+                                import os
+                                
+                                db_params = {
+                                    'host': os.getenv('DB_HOST', 'localhost'),
+                                    'database': os.getenv('DB_NAME', 'crawler_db'),
+                                    'user': os.getenv('DB_USER', 'postgres'),
+                                    'password': os.getenv('DB_PASSWORD', '')
+                                }
+                                
+                                # DB 저장 활성화 여부 확인
+                                enable_db = os.getenv('ENABLE_DB_STORAGE', 'false').lower() == 'true'
+                                
+                                if enable_db and db_params.get('password'):
+                                    pipeline = AnalystReportPipeline(db_params, enable_db=True)
+                                    saved_count = pipeline.process_reports(reports, source='naver', skip_errors=True)
+                                    self.logger.info(f"💾 DB 저장 완료: {saved_count}개 리포트 저장")
+                                else:
+                                    self.logger.debug("DB 저장 비활성화 (ENABLE_DB_STORAGE=false 또는 DB_PASSWORD 없음)")
+                                    
+                            except ImportError:
+                                self.logger.debug("정규화 파이프라인 모듈을 사용할 수 없습니다. 크롤링만 수행합니다.")
+                            except Exception as e:
+                                self.logger.warning(f"정규화/저장 실패 (크롤링은 성공): {e}")
+                        else:
+                            self.logger.warning(f"⚠️  크롤링 결과 없음: {site_id}")
+                        
+                        # 크롤링 완료 후 종료
+                        state.status = CrawlingStatus.IDLE
+                        break
                     else:
                         # 다른 사이트는 통합 크롤러 사용
                         # 여기서는 시뮬레이션 (필요시 확장)

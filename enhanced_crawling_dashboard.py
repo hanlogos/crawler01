@@ -1415,6 +1415,16 @@ class EnhancedCrawlingDashboard(QMainWindow):
             fake_face_profile='casual'
         )
         
+        # 네이버 금융 리서치 사이트 등록
+        self.site_manager.register_site(
+            site_id="naver_finance",
+            site_name="네이버 금융 리서치",
+            site_url="https://finance.naver.com/research",
+            days=7,
+            max_reports=50,
+            fake_face_profile='casual'
+        )
+        
         # 스케줄 설정
         self.site_manager.update_schedule("38com", {
             'interval': 'daily',
@@ -1424,6 +1434,11 @@ class EnhancedCrawlingDashboard(QMainWindow):
         self.site_manager.update_schedule("hankyung_consensus", {
             'interval': 'daily',
             'time': '09:00'
+        })
+        
+        self.site_manager.update_schedule("naver_finance", {
+            'interval': 'daily',
+            'time': '10:00'  # 한경 이후 실행
         })
         
         # 보고서 목록 새로고침
