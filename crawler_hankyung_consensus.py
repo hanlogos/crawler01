@@ -52,6 +52,7 @@ class ReportMetadata:
     target_price: Optional[str] = None
     current_price: Optional[str] = None
     consensus_rating: Optional[str] = None
+    pdf_url: Optional[str] = None  # PDF 다운로드 URL (네이버 보완용)
     
     def to_dict(self) -> dict:
         data = asdict(self)
@@ -410,6 +411,202 @@ class HankyungConsensusCrawler:
                 continue
         
         return reports
+    
+    def search_by_stock_with_fallback(
+        self,
+        stock_name: str,
+        stock_code: Optional[str] = None,
+        days: int = 7,
+        max_reports: int = 50,
+        enable_naver_fallback: bool = True
+    ) -> List[ReportMetadata]:
+        """
+        특정 종목으로 리포트 검색 (네이버 금융 자동 보완)
+        
+        PDF 참고: 한경에서 막히면 → 네이버 금융에서 다시 확인
+        
+        Args:
+            stock_name: 종목명 (예: "삼성전자")
+            stock_code: 종목 코드 (옵션, 기본값: None)
+            days: 최근 N일 (기본값: 7)
+            max_reports: 최대 수집 개수 (기본값: 50)
+            enable_naver_fallback: 네이버 금융 보완 활성화 여부 (기본값: True)
+        
+        Returns:
+            List[ReportMetadata]: 보고서 메타데이터 리스트 (네이버 보완 포함)
+        
+        Raises:
+            ValueError: 잘못된 stock_name 또는 days < 0
+            requests.RequestException: 네트워크 오류
+        """
+        # 입력 검증
+        if not stock_name or not isinstance(stock_name, str):
+            raise ValueError(f"stock_name must be a non-empty string, got {stock_name}")
+        if days < 0:
+            raise ValueError(f"days must be non-negative, got {days}")
+        if max_reports < 0:
+            raise ValueError(f"max_reports must be non-negative, got {max_reports}")
+        
+        self.logger.info(f"🔍 종목 검색 (네이버 보완 포함): {stock_name} (최근 {days}일)")
+        
+        # 1. 한경 컨센서스에서 수집
+        hankyung_reports = self.search_by_stock(stock_name, days=days, max_reports=max_reports)
+        
+        self.logger.info(f"📊 한경 컨센서스: {len(hankyung_reports)}개 수집")
+        
+        # 2. PDF URL이 없는 리포트 확인
+        reports_without_pdf = []
+        reports_with_pdf = []
+        
+        for report in hankyung_reports:
+            # PDF URL 확인 (상세 페이지에서 추출한 경우)
+            if hasattr(report, 'pdf_url') and report.pdf_url:
+                reports_with_pdf.append(report)
+            else:
+                # 상세 페이지에서 PDF URL 추출 시도
+                pdf_url = self._extract_pdf_url_from_detail(report.source_url)
+                if pdf_url:
+                    report.pdf_url = pdf_url
+                    reports_with_pdf.append(report)
+                else:
+                    reports_without_pdf.append(report)
+        
+        self.logger.info(f"📄 PDF 있는 리포트: {len(reports_with_pdf)}개, PDF 없는 리포트: {len(reports_without_pdf)}개")
+        
+        # 3. 네이버 금융 보완 (PDF 없는 리포트만)
+        if enable_naver_fallback and reports_without_pdf:
+            try:
+                from crawler_naver_finance_research import NaverFinanceResearchCrawler
+                
+                self.logger.info("🔄 네이버 금융에서 PDF 보완 시도 중...")
+                naver_crawler = NaverFinanceResearchCrawler(delay=2.0)
+                
+                # 네이버에서 동일 종목 리포트 수집
+                naver_reports = naver_crawler.search_by_stock(
+                    stock_name=stock_name,
+                    stock_code=stock_code,
+                    days=days,
+                    max_reports=max_reports,
+                    download_pdf=False  # URL만 추출
+                )
+                
+                self.logger.info(f"📊 네이버 금융: {len(naver_reports)}개 수집")
+                
+                # 4. 리포트 매칭 및 PDF URL 보완
+                # 한경 리포트와 네이버 리포트를 매칭 (제목, 증권사, 애널리스트, 날짜 기준)
+                matched_count = 0
+                for hankyung_report in reports_without_pdf:
+                    for naver_report in naver_reports:
+                        # 매칭 조건: 증권사, 애널리스트, 날짜가 유사하면 같은 리포트로 간주
+                        if self._is_same_report(hankyung_report, naver_report):
+                            # 네이버 리포트의 PDF URL을 한경 리포트에 추가
+                            if hasattr(naver_report, 'pdf_url') and naver_report.pdf_url:
+                                hankyung_report.pdf_url = naver_report.pdf_url
+                                matched_count += 1
+                                self.logger.info(
+                                    f"✅ PDF 보완: {hankyung_report.stock_name} - "
+                                    f"{hankyung_report.analyst_name} ({hankyung_report.firm})"
+                                )
+                                break
+                
+                self.logger.info(f"📄 PDF 보완 완료: {matched_count}개 리포트")
+                
+            except ImportError:
+                self.logger.warning("⚠️  네이버 금융 크롤러를 사용할 수 없습니다. 보완을 건너뜁니다.")
+            except Exception as e:
+                self.logger.error(f"❌ 네이버 금융 보완 실패: {e}")
+        
+        # 5. 최종 리포트 병합 (PDF 있는 리포트 + 보완된 리포트)
+        final_reports = reports_with_pdf + reports_without_pdf
+        
+        # 중복 제거 (source_url 기준)
+        seen_urls = set()
+        unique_reports = []
+        for report in final_reports:
+            if report.source_url not in seen_urls:
+                seen_urls.add(report.source_url)
+                unique_reports.append(report)
+        
+        self.logger.info(f"🎉 최종 수집: {len(unique_reports)}개 (PDF 보완 포함)")
+        
+        return unique_reports
+    
+    def _extract_pdf_url_from_detail(self, url: str) -> Optional[str]:
+        """
+        상세 페이지에서 PDF URL 추출
+        
+        Args:
+            url: 리포트 상세 페이지 URL
+        
+        Returns:
+            Optional[str]: PDF URL 또는 None
+        """
+        try:
+            html = self._fetch(url)
+            if not html:
+                return None
+            
+            soup = BeautifulSoup(html, 'html.parser')
+            return self._extract_pdf_url(soup, url)
+        except Exception as e:
+            self.logger.debug(f"PDF URL 추출 실패: {url} - {e}")
+            return None
+    
+    def _is_same_report(self, report1: ReportMetadata, report2: any) -> bool:
+        """
+        두 리포트가 동일한지 확인
+        
+        Args:
+            report1: 한경 리포트
+            report2: 네이버 리포트 (ReportMetadata 또는 dict)
+        
+        Returns:
+            bool: 동일한 리포트면 True
+        """
+        # report2를 dict로 변환
+        if hasattr(report2, 'to_dict'):
+            report2_dict = report2.to_dict()
+        elif isinstance(report2, dict):
+            report2_dict = report2
+        else:
+            return False
+        
+        # 매칭 조건
+        # 1. 증권사명이 유사한가?
+        firm1 = report1.firm.lower().replace(' ', '').replace('증권', '').replace('투자', '')
+        firm2 = str(report2_dict.get('firm', '')).lower().replace(' ', '').replace('증권', '').replace('투자', '')
+        firm_match = firm1 in firm2 or firm2 in firm1 or firm1 == firm2
+        
+        # 2. 애널리스트 이름이 같은가?
+        analyst1 = report1.analyst_name.lower().strip()
+        analyst2 = str(report2_dict.get('analyst_name', '')).lower().strip()
+        analyst_match = analyst1 == analyst2 or analyst1 in analyst2 or analyst2 in analyst1
+        
+        # 3. 날짜가 같은가? (같은 날 또는 ±1일)
+        date1 = report1.published_date
+        if isinstance(report2_dict.get('published_date'), str):
+            try:
+                date2 = datetime.fromisoformat(report2_dict['published_date'].replace('Z', '+00:00'))
+            except:
+                date2 = None
+        elif hasattr(report2, 'published_date'):
+            date2 = report2.published_date
+        else:
+            date2 = None
+        
+        date_match = False
+        if date2:
+            date_diff = abs((date1 - date2).days)
+            date_match = date_diff <= 1  # ±1일 허용
+        
+        # 4. 종목명이 같은가?
+        stock1 = report1.stock_name.lower().strip()
+        stock2 = str(report2_dict.get('stock_name', '')).lower().strip()
+        stock_match = stock1 == stock2 or stock1 in stock2 or stock2 in stock1
+        
+        # 최소 2개 조건 만족 시 동일 리포트로 간주
+        match_count = sum([firm_match, analyst_match, date_match, stock_match])
+        return match_count >= 2
     
     def _fetch(self, url: str) -> Optional[str]:
         """
