@@ -368,3 +368,4 @@ class EnhancedSearchResult:
             } if self.error.has_error else None
         }
 
+

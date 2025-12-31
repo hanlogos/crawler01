@@ -330,3 +330,4 @@ cache = redis.Redis(host='localhost', port=6379)
 **작성일**: 2025-01-01  
 **상태**: ✅ 통합 준비 완료
 
+

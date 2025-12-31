@@ -175,3 +175,4 @@ crawler_01/
 - 아바타 추가는 매우 간단: `BaseAvatar` 상속 + `_analyze_logic` 구현
 
 
+

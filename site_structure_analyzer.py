@@ -730,3 +730,4 @@ if __name__ == "__main__":
     print(f"\n✅ 구조 저장 완료: structure_*.json")
 
 
+

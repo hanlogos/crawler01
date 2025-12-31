@@ -113,3 +113,4 @@ pip install feedparser psycopg2-binary
 - ⏳ 기존 크롤러 통합 (다음 단계)
 - ⏳ 대시보드 통합 (다음 단계)
 
+

@@ -330,3 +330,4 @@ manager.data_manager.register_template(template)
 **상태**: ✅ 모든 시스템 정상 작동
 
 
+

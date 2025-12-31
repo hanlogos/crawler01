@@ -331,6 +331,34 @@ class SiteCrawlingManager:
                         # 크롤링 완료 후 종료
                         state.status = CrawlingStatus.IDLE
                         break
+                    elif site_id == "hankyung_consensus":
+                        # 한경 컨센서스 크롤러 사용
+                        from crawler_hankyung_consensus import HankyungConsensusCrawler
+                        crawler = HankyungConsensusCrawler(
+                            delay=3.0,
+                            max_retries=3,
+                            use_adaptive=True
+                        )
+                        
+                        # 최근 보고서 크롤링
+                        self.logger.info(f"크롤링 실행 중: {site_id} (days={state.days}, max={state.max_reports})")
+                        reports = crawler.crawl_recent_reports(
+                            days=state.days,
+                            max_reports=state.max_reports
+                        )
+                        
+                        if reports:
+                            state.current_progress = len(reports)
+                            state.total_collected += len(reports)
+                            state.last_collected = datetime.now()
+                            state.updated_at = datetime.now()
+                            self.logger.info(f"✅ 크롤링 완료: {site_id} - {len(reports)}개 보고서 수집")
+                        else:
+                            self.logger.warning(f"⚠️  크롤링 결과 없음: {site_id}")
+                        
+                        # 크롤링 완료 후 종료
+                        state.status = CrawlingStatus.IDLE
+                        break
                     else:
                         # 다른 사이트는 통합 크롤러 사용
                         # 여기서는 시뮬레이션 (필요시 확장)

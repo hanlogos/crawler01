@@ -78,3 +78,4 @@ python test_crawler_quick.py 3  # 상세 추출 테스트
 - 실제 리포트 페이지 URL을 확인한 후 크롤러 수정 필요
 
 
+

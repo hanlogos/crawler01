@@ -117,3 +117,4 @@ python test_widget_quick.py
    - 알림 기능
 
 
+

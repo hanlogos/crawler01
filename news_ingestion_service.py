@@ -570,3 +570,4 @@ if __name__ == '__main__':
     # 지속적 실행 (주석 해제 시)
     # service.run_continuous(interval_minutes=5)
 
+

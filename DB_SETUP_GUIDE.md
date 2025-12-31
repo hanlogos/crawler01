@@ -190,3 +190,4 @@ psql -U postgres -d abiseu -f news_ingestion_schema.sql
 
 **완료되면 a+b+c 모든 기능 사용 가능!**
 
+

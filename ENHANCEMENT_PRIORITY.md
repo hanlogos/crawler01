@@ -378,3 +378,4 @@ class QuickActionPanel(QWidget):
 - [ ] 품질 관리
 
 
+

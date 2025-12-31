@@ -1405,8 +1405,23 @@ class EnhancedCrawlingDashboard(QMainWindow):
             fake_face_profile='casual'
         )
         
+        # 한경 컨센서스 사이트 등록
+        self.site_manager.register_site(
+            site_id="hankyung_consensus",
+            site_name="한경 컨센서스",
+            site_url="https://markets.hankyung.com/consensus",
+            days=1,
+            max_reports=50,
+            fake_face_profile='casual'
+        )
+        
         # 스케줄 설정
         self.site_manager.update_schedule("38com", {
+            'interval': 'daily',
+            'time': '09:00'
+        })
+        
+        self.site_manager.update_schedule("hankyung_consensus", {
             'interval': 'daily',
             'time': '09:00'
         })
