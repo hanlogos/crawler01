@@ -379,3 +379,4 @@ class QuickActionPanel(QWidget):
 
 
 
+

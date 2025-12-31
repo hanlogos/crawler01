@@ -114,3 +114,4 @@ pip install feedparser psycopg2-binary
 - ⏳ 대시보드 통합 (다음 단계)
 
 
+

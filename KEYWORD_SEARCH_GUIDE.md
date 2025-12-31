@@ -165,3 +165,4 @@ favorite_manager.add_favorite('stock', '삼성전자', '005930')
 **상태**: ✅ 완료
 
 
+

@@ -88,3 +88,4 @@ FROM analyst_reports
 WHERE published_at >= CURRENT_DATE - INTERVAL '30 days'
 GROUP BY stock_code, stock_name;
 
+

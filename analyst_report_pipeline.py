@@ -272,3 +272,4 @@ if __name__ == '__main__':
     saved = pipeline.process_reports(test_reports, source='naver')
     print(f"\n저장된 리포트: {saved}개")
 
+

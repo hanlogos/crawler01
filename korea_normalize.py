@@ -540,3 +540,4 @@ if __name__ == '__main__':
     print(f"  - 중립: {snapshot_hk['recommendation']['hold']}")
     print(f"  - 매도: {snapshot_hk['recommendation']['sell']}")
 
+
