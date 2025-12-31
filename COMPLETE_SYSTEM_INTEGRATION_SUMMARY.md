@@ -84,12 +84,17 @@
 
 **기능**:
 - 한경 컨센서스 크롤링 완료 후 자동으로 정규화 및 저장
+- 네이버 금융 리서치 크롤링 완료 후 자동으로 정규화 및 저장
 - 환경변수로 DB 저장 활성화/비활성화 제어
 - 오류 처리: 정규화/저장 실패 시에도 크롤링 결과 유지
 
 **환경변수**:
 - `ENABLE_DB_STORAGE=true`: DB 저장 활성화
 - `DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASSWORD`: DB 연결 정보
+
+**통합된 크롤러**:
+- ✅ 한경 컨센서스 (`hankyung_consensus`)
+- ✅ 네이버 금융 리서치 (`naver_finance`)
 
 ## 📊 전체 데이터 흐름
 
@@ -180,7 +185,13 @@ export DB_PASSWORD=your_password
 from site_crawling_manager import SiteCrawlingManager
 
 manager = SiteCrawlingManager()
+
+# 한경 컨센서스
 manager.start_crawling("hankyung_consensus", days=7, max_reports=50)
+# 자동으로 정규화 및 DB 저장 수행
+
+# 네이버 금융 리서치
+manager.start_crawling("naver_finance", days=7, max_reports=50)
 # 자동으로 정규화 및 DB 저장 수행
 ```
 
@@ -196,14 +207,16 @@ manager.start_crawling("hankyung_consensus", days=7, max_reports=50)
 - `crawler_hankyung_consensus.py`: 한경 컨센서스 크롤러 (개선됨)
 
 ### 통합 모듈
-- `site_crawling_manager.py`: 파이프라인 통합됨
+- `site_crawling_manager.py`: 파이프라인 통합됨 (한경 + 네이버)
+- `enhanced_crawling_dashboard.py`: 네이버 금융 사이트 등록됨
 
 ### 문서
 - `NORMALIZATION_INTEGRATION.md`: 정규화 시스템 통합 완료 보고서
 - `HANKYUNG_CRAWLER_IMPROVEMENTS.md`: 한경 크롤러 개선 계획
 - `HANKYUNG_IMPROVEMENTS_COMPLETE.md`: 한경 크롤러 개선 완료 보고서
 - `NAVER_FALLBACK_COMPLETE.md`: 네이버 보완 기능 완료 보고서
-- `PIPELINE_INTEGRATION_COMPLETE.md`: 파이프라인 통합 완료 보고서
+- `PIPELINE_INTEGRATION_COMPLETE.md`: 한경 컨센서스 파이프라인 통합 완료 보고서
+- `NAVER_FINANCE_PIPELINE_INTEGRATION.md`: 네이버 금융 파이프라인 통합 완료 보고서
 - `COMPLETE_SYSTEM_INTEGRATION_SUMMARY.md`: 전체 시스템 통합 요약 (본 문서)
 
 ## 🎯 주요 개선 효과
@@ -236,8 +249,8 @@ manager.start_crawling("hankyung_consensus", days=7, max_reports=50)
 - 컨센서스 조회 기능 추가
 
 ### 2. 다른 크롤러 통합
-- 네이버 금융 크롤러에 파이프라인 통합
-- 38커뮤니케이션 크롤러에 파이프라인 통합
+- ✅ 네이버 금융 크롤러에 파이프라인 통합 (완료)
+- 38커뮤니케이션 크롤러에 파이프라인 통합 (선택)
 
 ### 3. 고급 기능
 - 리포트 매칭 정확도 향상 (머신러닝)
